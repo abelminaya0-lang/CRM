@@ -1,6 +1,6 @@
 {
-  "name": "CRM DJ",
-  "description": "CRM DJ — Tu negocio en una sola pantalla. Gestión integral de fechas, kanban, calendario, estadísticas, objetivos, pagos, finanzas, notas y asistente IA para DJs.",
+  "name": "EL COYOTE SHOW",
+  "description": "EL COYOTE SHOW — CRM integral de gestión de fechas, calendario, estadísticas, objetivos, pagos, finanzas, notas y asistente.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

@@ -17,7 +17,7 @@ import { ModalAsistente } from './components/ModalAsistente';
 import { ModalAjustes } from './components/ModalAjustes';
 import { Toast } from './components/Toast';
 
-const STORAGE_KEY = 'djcrm_v3_clean_soles';
+const STORAGE_KEY = 'djcrm_v4_el_coyote_show';
 
 export function App() {
   const [state, setState] = useState<DJState>(() => {
@@ -36,8 +36,8 @@ export function App() {
       console.error('Error loading CRM state from localStorage', e);
     }
     return getFreshState({
-      nombre: 'DJ',
-      handle: '@dj',
+      nombre: 'EL COYOTE SHOW',
+      handle: '@elcoyoteshow',
       moneda: 'S/',
       metaContenido: 4,
       metaFechas: 6
@@ -125,8 +125,8 @@ export function App() {
     <div className="wrap">
       {/* Header */}
       <Header
-        djName={state.perfil.nombre || 'DJ CUENCA'}
-        brandLine="CRM · Cuenca Content"
+        djName={state.perfil.nombre || 'EL COYOTE SHOW'}
+        brandLine="EL COYOTE SHOW · CRM"
         onOpenAjustes={() => setModalAjustesOpen(true)}
         onOpenAsistente={() => setModalAsistenteOpen(true)}
         onOpenNuevaFecha={() => handleOpenNuevaFecha()}

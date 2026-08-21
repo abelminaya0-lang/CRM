@@ -64,8 +64,8 @@ export function getFreshState(config: {
 }): DJState {
   return {
     perfil: {
-      nombre: config.nombre || 'DJ',
-      handle: config.handle || '@dj',
+      nombre: config.nombre || 'EL COYOTE SHOW',
+      handle: config.handle || '@elcoyoteshow',
       moneda: config.moneda || 'S/',
       metaContenido: config.metaContenido || 5,
       metaFechas: config.metaFechas || 8
@@ -231,8 +231,8 @@ export function getSeedData(): DJState {
 
   return {
     perfil: {
-      nombre: "DJ PRO",
-      handle: "@djpro",
+      nombre: "EL COYOTE SHOW",
+      handle: "@elcoyoteshow",
       moneda: "S/",
       metaContenido: 4,
       metaFechas: 6

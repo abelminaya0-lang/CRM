@@ -44,8 +44,8 @@ export const ModalAjustes: React.FC<ModalAjustesProps> = ({
       ...prev,
       perfil: {
         ...prev.perfil,
-        nombre: nombre.trim() || 'DJ',
-        handle: handle.trim(),
+        nombre: nombre.trim() || 'EL COYOTE SHOW',
+        handle: handle.trim() || '@elcoyoteshow',
         moneda: moneda.trim() || 'S/',
         metaContenido: +metaContenido || 0,
         metaFechas: +metaFechas || 0,
@@ -99,8 +99,8 @@ export const ModalAjustes: React.FC<ModalAjustesProps> = ({
     if (window.confirm('¿Vaciar todo y comenzar completamente en blanco (0 fechas, 0 pagos, 0 notas)?')) {
       onUpdateState((prev) =>
         getFreshState({
-          nombre: prev.perfil.nombre || 'DJ',
-          handle: prev.perfil.handle || '@dj',
+          nombre: prev.perfil.nombre || 'EL COYOTE SHOW',
+          handle: prev.perfil.handle || '@elcoyoteshow',
           moneda: 'S/',
           metaContenido: prev.perfil.metaContenido || 4,
           metaFechas: prev.perfil.metaFechas || 6,
@@ -123,12 +123,12 @@ export const ModalAjustes: React.FC<ModalAjustesProps> = ({
 
         <form onSubmit={handleSave}>
           <div className="field">
-            <label>Nombre del DJ / Proyecto</label>
+            <label>Nombre del DJ / Proyecto / Show</label>
             <input
               required
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
-              placeholder="Ej: DJ PRO"
+              placeholder="Ej: EL COYOTE SHOW"
             />
           </div>
 
@@ -138,7 +138,7 @@ export const ModalAjustes: React.FC<ModalAjustesProps> = ({
               <input
                 value={handle}
                 onChange={(e) => setHandle(e.target.value)}
-                placeholder="@tucuenta"
+                placeholder="@elcoyoteshow"
               />
             </div>
             <div className="field">
