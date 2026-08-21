@@ -1,0 +1,6 @@
+{
+  "name": "CRM DJ",
+  "description": "CRM DJ — Tu negocio en una sola pantalla. Gestión integral de fechas, kanban, calendario, estadísticas, objetivos, pagos, finanzas, notas y asistente IA para DJs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
