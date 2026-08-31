@@ -24,13 +24,14 @@ import { ModalAsistente } from './components/ModalAsistente';
 import { ModalAjustes } from './components/ModalAjustes';
 import { Toast } from './components/Toast';
 
-const STORAGE_KEY = 'ivacreativa_tiktok_crm_v3';
+const STORAGE_KEY = 'ivacreativa_tiktok_crm_v4';
 
 export function App() {
   const [state, setState] = useState<DJState>(() => {
     try {
       localStorage.removeItem('ivacreativa_tiktok_crm_v1');
       localStorage.removeItem('ivacreativa_tiktok_crm_v2');
+      localStorage.removeItem('ivacreativa_tiktok_crm_v3');
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
@@ -46,7 +47,7 @@ export function App() {
     } catch (e) {
       console.error('Error loading CRM state from localStorage', e);
     }
-    // Clean initial state with real clients: Terminal Marino & Papá Plátano
+    // Clean initial state with real clients: Terminal Marino (25 Agosto) & Papá Plátano (Agosto pagado, prox 15 Septiembre)
     return getFreshState({
       nombre: 'IVA CREATIVA',
       handle: '@ivacreativa.pe',

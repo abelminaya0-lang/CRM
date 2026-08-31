@@ -108,63 +108,63 @@ export function getFreshState(config: {
   const fechas: FechaGig[] = [
     {
       id: idTerminal,
-      creado: Date.now() - 86400000 * 2,
+      creado: Date.now() - 86400000 * 6,
       lugar: 'Terminal Marino',
-      fecha: iso(0),
+      fecha: '2026-08-25',
       horario: '10:00 a 13:00 (Pack 4 Videos)',
       contacto: 'Cliente Directo · Terminal Marino',
       ticket: 250,
       sena: 250,
       estado: 'cobrada',
-      notas: 'Paquete Único de 4 Videos TikTok por S/ 250. Pago completado al 100% (Pago Único cancelado).'
+      notas: 'Paquete Único de 4 Videos TikTok por S/ 250 (Agosto). Pagado el 25 de Agosto de 2026 (Único solo pago 100% cancelado).'
     },
     {
       id: idPapaPlatano1,
-      creado: Date.now() - 86400000,
-      lugar: 'Papá Plátano',
+      creado: Date.now() - 86400000 * 16,
+      lugar: 'Papá Plátano (Grabación Jueves)',
       fecha: getNextThursday(0),
-      horario: '12:00 a 16:00 (Jueves)',
-      contacto: 'Cliente Mensual · 1 vez x semana',
+      horario: '12:00 a 16:00 (Todos los Jueves)',
+      contacto: 'Cliente Mensual · Pago cada 15 de cada mes',
       ticket: 400,
       sena: 400,
       estado: 'confirmada',
-      notas: 'Cliente Mensual (Retainer):\n- 6 videos para TikTok al mes por S/ 400.\n- Grabación: 1 vez por semana los días JUEVES de 12:00 PM a 4:00 PM (12 a 16 hrs).\n- Sesión 1 del mes.'
+      notas: 'Cliente Mensual (Retainer):\n- Paquete: 6 videos de TikTok por S/ 400 mensuales.\n- Pago: Pagó Agosto (15 de Agosto). Próximo pago: 15 de Septiembre.\n- Grabaciones: TODOS LOS JUEVES de 12:00 PM a 4:00 PM (12 a 16 hrs).\n- Frecuencia: 1 vez por semana.'
     },
     {
       id: idPapaPlatano2,
       creado: Date.now(),
-      lugar: 'Papá Plátano (Rodaje Semanal)',
+      lugar: 'Papá Plátano (Grabación Jueves)',
       fecha: getNextThursday(1),
-      horario: '12:00 a 16:00 (Jueves)',
-      contacto: 'Cliente Mensual · 1 vez x semana',
+      horario: '12:00 a 16:00 (Todos los Jueves)',
+      contacto: 'Cliente Mensual · Pago cada 15',
       ticket: 0,
       sena: 0,
       estado: 'reservada',
-      notas: 'Rodaje Semanal Jueves (12:00 a 16:00). Sesión 2 del mes (incluido en paquete mensual de S/ 400).'
+      notas: 'Rodaje semanal fijo de los Jueves (12:00 a 16:00). Sesión 2 del mes (incluido en plan mensual de S/ 400).'
     },
     {
       id: idPapaPlatano3,
       creado: Date.now(),
-      lugar: 'Papá Plátano (Rodaje Semanal)',
+      lugar: 'Papá Plátano (Grabación Jueves)',
       fecha: getNextThursday(2),
-      horario: '12:00 a 16:00 (Jueves)',
-      contacto: 'Cliente Mensual · 1 vez x semana',
+      horario: '12:00 a 16:00 (Todos los Jueves)',
+      contacto: 'Cliente Mensual · Pago cada 15',
       ticket: 0,
       sena: 0,
       estado: 'reservada',
-      notas: 'Rodaje Semanal Jueves (12:00 a 16:00). Sesión 3 del mes (incluido en paquete mensual de S/ 400).'
+      notas: 'Rodaje semanal fijo de los Jueves (12:00 a 16:00). Sesión 3 del mes (incluido en plan mensual de S/ 400).'
     },
     {
       id: idPapaPlatano4,
       creado: Date.now(),
-      lugar: 'Papá Plátano (Rodaje Semanal)',
+      lugar: 'Papá Plátano (Grabación Jueves)',
       fecha: getNextThursday(3),
-      horario: '12:00 a 16:00 (Jueves)',
-      contacto: 'Cliente Mensual · 1 vez x semana',
+      horario: '12:00 a 16:00 (Todos los Jueves)',
+      contacto: 'Cliente Mensual · Pago cada 15',
       ticket: 0,
       sena: 0,
       estado: 'reservada',
-      notas: 'Rodaje Semanal Jueves (12:00 a 16:00). Sesión 4 del mes (incluido en paquete mensual de S/ 400).'
+      notas: 'Rodaje semanal fijo de los Jueves (12:00 a 16:00). Sesión 4 del mes (incluido en plan mensual de S/ 400).'
     }
   ];
 
@@ -173,45 +173,45 @@ export function getFreshState(config: {
       id: uid(),
       fechaId: idTerminal,
       monto: 250,
-      fecha: iso(0),
-      concepto: 'Pago Único 100% · Pack 4 Videos TikTok (Terminal Marino)',
+      fecha: '2026-08-25',
+      concepto: 'Pago Único 100% (Mes Agosto) · Pack 4 Videos TikTok (Terminal Marino)',
       metodo: 'Transferencia / Efectivo',
-      creado: Date.now() - 86400000
+      creado: Date.now() - 86400000 * 6
     },
     {
       id: uid(),
       fechaId: idPapaPlatano1,
       monto: 400,
-      fecha: iso(0),
-      concepto: 'Pago Mensualidad · 6 Videos TikTok (Papá Plátano)',
+      fecha: '2026-08-15',
+      concepto: 'Mensualidad Agosto (6 Videos TikTok) · Papá Plátano',
       metodo: 'Transferencia / Yape',
-      creado: Date.now()
+      creado: Date.now() - 86400000 * 16
     }
   ];
 
   const pasos = [
-    { id: uid(), texto: 'Entregar los 4 videos editados a Terminal Marino', hecho: false },
-    { id: uid(), texto: 'Preparar escaleta y guiones para rodaje de los Jueves (12 a 4 PM) en Papá Plátano', hecho: false },
-    { id: uid(), texto: 'Cargar equipos (cámara, trípode, micrófonos, luces) para rodaje de Papá Plátano', hecho: false }
+    { id: uid(), texto: 'Entregar los 4 videos completados a Terminal Marino (Pagado 25 de Agosto)', hecho: true },
+    { id: uid(), texto: 'Preparar guiones y escaleta para rodaje de este JUEVES (12:00 a 16:00) en Papá Plátano', hecho: false },
+    { id: uid(), texto: 'Facturar y cobrar mensualidad de Septiembre a Papá Plátano (Vence: 15 de Septiembre)', hecho: false }
   ];
 
   const objetivos = [
     { id: uid(), texto: 'Completar los 6 videos mensuales de Papá Plátano (Grabaciones Jueves 12 a 4 PM)', hecho: false },
-    { id: uid(), texto: 'Entregar pack de 4 videos a Terminal Marino (S/ 250 cobrados)', hecho: true },
-    { id: uid(), texto: 'Cerrar 2 nuevos clientes en paquete mensual de TikTok', hecho: false }
+    { id: uid(), texto: 'Pack 4 videos Terminal Marino (Cobrado S/ 250 el 25/08)', hecho: true },
+    { id: uid(), texto: 'Cobro de mensualidad de Septiembre Papá Plátano (Fecha límite: 15 de Septiembre)', hecho: false }
   ];
 
   const notas = [
     {
       id: uid(),
-      texto: '📌 CLIENTE: PAPÁ PLÁTANO\n- Formato: Mensual (Retainer recurrente)\n- Paquete: 6 videos de TikTok por S/ 400 al mes.\n- Horario de grabación: TODOS LOS JUEVES de 12:00 a 16:00 (12 PM a 4 PM).\n- Frecuencia: 1 vez por semana.',
+      texto: '📌 CLIENTE MENSUAL: PAPÁ PLÁTANO\n- Plan: 6 videos de TikTok al mes por S/ 400.\n- Modalidad de Pago: Paga cada 15 de cada mes.\n  * Mes Agosto: Pagado el 15 de Agosto (S/ 400).\n  * Mes Septiembre: Cobro programado para el 15 de Septiembre (S/ 400).\n- Rodajes: TODOS LOS JUEVES de 12:00 PM a 4:00 PM (12 a 16 hrs) - 1 vez x semana.',
       color: 'c1' as const,
       pin: true,
       creado: Date.now()
     },
     {
       id: uid(),
-      texto: '📌 CLIENTE: TERMINAL MARINO\n- Formato: Paquete Único\n- Paquete: 4 videos de TikTok por S/ 250.\n- Estado de pago: 100% Pagado (Cobrado S/ 250).',
+      texto: '📌 CLIENTE ÚNICO: TERMINAL MARINO\n- Paquete: 4 videos de TikTok por S/ 250.\n- Modalidad: Único solo pago (Mes de Agosto).\n- Fecha de Pago: 25 de Agosto de 2026.\n- Estado: 100% Cobrado y Cancelado.',
       color: 'c2' as const,
       pin: true,
       creado: Date.now()
@@ -225,6 +225,13 @@ export function getFreshState(config: {
       cuando: `${getNextThursday(0)}T12:00`,
       hecho: false,
       creado: Date.now()
+    },
+    {
+      id: uid(),
+      texto: '💰 Cobro de Mensualidad Septiembre (S/ 400) a PAPÁ PLÁTANO',
+      cuando: '2026-09-15T09:00',
+      hecho: false,
+      creado: Date.now()
     }
   ];
 
@@ -233,19 +240,19 @@ export function getFreshState(config: {
       id: uid(),
       creado: Date.now(),
       nombre: 'Papá Plátano · Retainer Mensual 6 Videos',
-      desc: 'Producción continua de 6 videos mensuales. Rodajes fijos todos los jueves de 12:00 a 16:00.',
+      desc: 'Producción continua de 6 videos mensuales. Rodajes todos los jueves de 12 a 4 PM. Pago recurrente cada 15.',
       estado: 'activo' as const,
       prio: 'alta' as const,
-      paso: 'Grabar contenido este Jueves de 12 a 4 PM'
+      paso: 'Grabar este Jueves (12:00 a 16:00) y cobrar Septiembre el 15/09'
     },
     {
       id: uid(),
       creado: Date.now(),
       nombre: 'Terminal Marino · Pack 4 Videos',
-      desc: 'Producción y entrega de 4 videos de alto impacto para TikTok (S/ 250 pagado).',
+      desc: 'Producción de 4 videos para TikTok. Cobrado S/ 250 el día 25 de Agosto.',
       estado: 'activo' as const,
       prio: 'media' as const,
-      paso: 'Edición final y entrega'
+      paso: 'Entregado y 100% cancelado'
     }
   ];
 
@@ -254,23 +261,23 @@ export function getFreshState(config: {
     movimientos: [
       {
         id: uid(),
-        creado: Date.now() - 86400000,
+        creado: Date.now() - 86400000 * 6,
         tipo: 'ingreso' as const,
         clase: '' as const,
         categoria: 'Pack Videos Virales (8 a 16 TikToks)',
         monto: 250,
-        fecha: iso(0),
-        concepto: 'Cobro Pack 4 Videos · Terminal Marino'
+        fecha: '2026-08-25',
+        concepto: 'Cobro Pack 4 Videos (Pago Único Agosto) · Terminal Marino'
       },
       {
         id: uid(),
-        creado: Date.now(),
+        creado: Date.now() - 86400000 * 16,
         tipo: 'ingreso' as const,
         clase: '' as const,
         categoria: 'Paquete Mensual TikTok (Retainer 12 Videos)',
         monto: 400,
-        fecha: iso(0),
-        concepto: 'Cobro Mensualidad (6 videos) · Papá Plátano'
+        fecha: '2026-08-15',
+        concepto: 'Cobro Mensualidad Agosto (6 videos) · Papá Plátano'
       }
     ]
   };
