@@ -24,19 +24,25 @@ import { ModalAsistente } from './components/ModalAsistente';
 import { ModalAjustes } from './components/ModalAjustes';
 import { Toast } from './components/Toast';
 
-const STORAGE_KEY = 'ivacreativa_tiktok_crm_v1';
+const STORAGE_KEY = 'ivacreativa_tiktok_crm_v2';
 
 export function App() {
   const [state, setState] = useState<DJState>(() => {
     try {
+      // Clear legacy storage keys if any
+      localStorage.removeItem('ivacreativa_tiktok_crm_v1');
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        const currentWeek = isoWeek(new Date());
-        if (parsed.contenido && parsed.contenido.semana !== currentWeek) {
-          parsed.contenido = { semana: currentWeek, hechos: 0 };
+        // If parsed state still contains demo data from old sessions, reset to clean
+        const hasOldDemo = parsed.fechas?.some((f: any) => f.lugar?.includes('Fuego & Brasa') || f.lugar?.includes('OdontoPro'));
+        if (!hasOldDemo) {
+          const currentWeek = isoWeek(new Date());
+          if (parsed.contenido && parsed.contenido.semana !== currentWeek) {
+            parsed.contenido = { semana: currentWeek, hechos: 0 };
+          }
+          return parsed;
         }
-        return parsed;
       }
     } catch (e) {
       console.error('Error loading CRM state from localStorage', e);
@@ -76,10 +82,22 @@ export function App() {
       try {
         const cloudResult = await loadStateFromFirestore();
         if (isMounted && cloudResult.success && cloudResult.state) {
-          setState((prev) => {
-            // If local state is newer or identical, keep it, otherwise sync from cloud
-            return cloudResult.state!;
-          });
+          const cloudState = cloudResult.state;
+          const hasOldDemo = cloudState.fechas?.some((f: any) => f.lugar?.includes('Fuego & Brasa') || f.lugar?.includes('OdontoPro'));
+          if (!hasOldDemo) {
+            setState(cloudState);
+          } else {
+            // Overwrite cloud demo state with clean state
+            const clean = getFreshState({
+              nombre: cloudState.perfil?.nombre || 'IVA CREATIVA',
+              handle: cloudState.perfil?.handle || '@ivacreativa.pe',
+              moneda: cloudState.perfil?.moneda || 'S/',
+              metaContenido: cloudState.perfil?.metaContenido || 12,
+              metaFechas: cloudState.perfil?.metaFechas || 6,
+            });
+            setState(clean);
+            await saveStateToFirestore(clean);
+          }
         }
       } catch (err) {
         console.warn('Initial Firebase fetch notice:', err);
