@@ -24,7 +24,7 @@ import { ModalAsistente } from './components/ModalAsistente';
 import { ModalAjustes } from './components/ModalAjustes';
 import { Toast } from './components/Toast';
 
-const STORAGE_KEY = 'ivacreativa_tiktok_crm_v5';
+const STORAGE_KEY = 'ivacreativa_tiktok_crm_v6';
 
 export function App() {
   const [hidePrices, setHidePrices] = useState<boolean>(() => {
@@ -41,6 +41,7 @@ export function App() {
       localStorage.removeItem('ivacreativa_tiktok_crm_v2');
       localStorage.removeItem('ivacreativa_tiktok_crm_v3');
       localStorage.removeItem('ivacreativa_tiktok_crm_v4');
+      localStorage.removeItem('ivacreativa_tiktok_crm_v5');
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);

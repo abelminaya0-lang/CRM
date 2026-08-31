@@ -126,24 +126,24 @@ export function getFreshState(config: {
       creado: Date.now(),
       lugar: 'Terminal Marino (Grabación 2 Videos Faltantes)',
       fecha: '2026-09-02',
-      horario: '10:00 a 13:00 (Miércoles)',
+      horario: '11:00 AM (Miércoles 2 de Septiembre)',
       contacto: 'Cliente Directo · Terminal Marino',
       ticket: 250,
-      sena: 250,
+      sena: 200,
       estado: 'confirmada',
-      notas: 'Rodaje para completar los 2 videos que faltan del paquete de 4 videos (S/ 250 ya 100% pagado el 25 de Agosto).\n- Fecha: Miércoles 2 de Septiembre de 2026.\n- Objetivo: Grabar 2 videos de alto impacto para TikTok.'
+      notas: 'Rodaje para completar los 2 videos que faltan del paquete de 4 videos (S/ 250).\n- Día de Grabación: Miércoles 2 de Septiembre a las 11:00 AM.\n- Pagado: S/ 200 (Adelanto cancelado el 25 de Agosto).\n- Saldo Restante por cobrar: S/ 50 soles.'
     },
     {
       id: idTerminal,
       creado: Date.now() - 86400000 * 6,
-      lugar: 'Terminal Marino (Cobro Pack 4 Videos)',
+      lugar: 'Terminal Marino (Adelanto Pack 4 Videos)',
       fecha: '2026-08-25',
-      horario: 'Pago y Primera Sesión (2 Videos)',
+      horario: 'Pago Adelanto y Primera Sesión (2 Videos)',
       contacto: 'Cliente Directo · Terminal Marino',
       ticket: 250,
-      sena: 250,
-      estado: 'cobrada',
-      notas: 'Paquete de 4 Videos TikTok por S/ 250 (Agosto). Pagado el 25 de Agosto de 2026 (Único solo pago 100% cancelado). 2 videos completados, 2 videos restantes programados para el Miércoles 2 de Septiembre.'
+      sena: 200,
+      estado: 'confirmada',
+      notas: 'Paquete de 4 Videos TikTok por S/ 250 (Agosto). Adelanto de S/ 200 pagado el 25 de Agosto. Resta saldo de S/ 50 a cobrar el día de la grabación/entrega (Miércoles 2 de Septiembre a las 11:00 AM).'
     },
     {
       id: idPapaPlatano1,
@@ -199,9 +199,9 @@ export function getFreshState(config: {
     {
       id: uid(),
       fechaId: idTerminal,
-      monto: 250,
+      monto: 200,
       fecha: '2026-08-25',
-      concepto: 'Pago Único 100% (Mes Agosto) · Pack 4 Videos TikTok (Terminal Marino)',
+      concepto: 'Adelanto Pack 4 Videos (Mes Agosto) · Terminal Marino (Resta saldo S/ 50)',
       metodo: 'Transferencia / Efectivo',
       creado: Date.now() - 86400000 * 6
     },
@@ -217,22 +217,22 @@ export function getFreshState(config: {
   ];
 
   const pasos = [
-    { id: uid(), texto: '🎬 Rodaje en Terminal Marino: Grabar los 2 videos restantes del paquete (Miércoles 2 de Septiembre, 10:00 a 13:00)', hecho: false },
+    { id: uid(), texto: '🎬 Rodaje Terminal Marino: Grabar los 2 videos restantes (Miércoles 2 de Septiembre a las 11:00 AM) y cobrar saldo restante de S/ 50', hecho: false },
     { id: uid(), texto: '🎬 Preparar guiones y escaleta para rodaje de este JUEVES (12:00 a 16:00) en Papá Plátano', hecho: false },
     { id: uid(), texto: '💰 Facturar y cobrar mensualidad de Septiembre a Papá Plátano (Vence: 15 de Septiembre)', hecho: false }
   ];
 
   const objetivos = [
-    { id: uid(), texto: 'Completar los 2 videos restantes de Terminal Marino (Rodaje Miércoles 2 de Septiembre)', hecho: false },
+    { id: uid(), texto: 'Completar rodaje de 2 videos y cobrar saldo de S/ 50 a Terminal Marino (Miércoles 2 Septiembre, 11:00 AM)', hecho: false },
     { id: uid(), texto: 'Completar los 6 videos mensuales de Papá Plátano (Grabaciones Jueves 12 a 4 PM)', hecho: false },
-    { id: uid(), texto: 'Pack 4 videos Terminal Marino (Cobrado S/ 250 el 25/08)', hecho: true },
+    { id: uid(), texto: 'Adelanto 4 videos Terminal Marino (Cobrado S/ 200 el 25/08, saldo S/ 50)', hecho: true },
     { id: uid(), texto: 'Cobro de mensualidad de Septiembre Papá Plátano (Fecha límite: 15 de Septiembre)', hecho: false }
   ];
 
   const notas = [
     {
       id: uid(),
-      texto: '📌 CLIENTE ÚNICO: TERMINAL MARINO\n- Paquete: 4 videos de TikTok por S/ 250 (Único pago 100% cancelado el 25/08).\n- Avance de videos: 2 videos listos / 2 videos pendientes de grabación.\n- Día de Grabación: MIÉRCOLES 2 DE SEPTIEMBRE de 2026 (10:00 a 13:00).\n- Objetivo: Finalizar rodaje de los 2 videos que faltan para entrega final.',
+      texto: '📌 CLIENTE: TERMINAL MARINO\n- Paquete: 4 videos de TikTok por S/ 250.\n- Pagos:\n  * Adelanto pagado el 25/08: S/ 200.\n  * Saldo Restante por cobrar: S/ 50.\n- Avance de videos: 2 videos listos / 2 videos pendientes de grabación.\n- Día de Grabación: MIÉRCOLES 2 DE SEPTIEMBRE de 2026 a las 11:00 AM (11 de la mañana).\n- Objetivo: Grabar los 2 videos faltantes y liquidar saldo de S/ 50.',
       color: 'c2' as const,
       pin: true,
       creado: Date.now()
@@ -249,8 +249,8 @@ export function getFreshState(config: {
   const recordatorios = [
     {
       id: uid(),
-      texto: '🎬 Rodaje TERMINAL MARINO: Grabar 2 videos restantes (Miércoles 2 de Septiembre, 10:00 AM a 1:00 PM)',
-      cuando: '2026-09-02T10:00',
+      texto: '🎬 Rodaje TERMINAL MARINO: Grabar 2 videos restantes a las 11:00 AM · Cobrar saldo S/ 50',
+      cuando: '2026-09-02T11:00',
       hecho: false,
       creado: Date.now()
     },
@@ -274,11 +274,11 @@ export function getFreshState(config: {
     {
       id: uid(),
       creado: Date.now(),
-      nombre: 'Terminal Marino · Pack 4 Videos (S/ 250 Pagado)',
-      desc: 'Producción de 4 videos para TikTok. 2 grabados, 2 restantes por grabar el Miércoles 2 de Septiembre.',
+      nombre: 'Terminal Marino · Pack 4 Videos (S/ 200 Adelanto · Saldo S/ 50)',
+      desc: 'Producción de 4 videos para TikTok. 2 grabados, 2 restantes por grabar el Miércoles 2 de Septiembre a las 11:00 AM. Resta cobrar saldo de S/ 50.',
       estado: 'activo' as const,
       prio: 'alta' as const,
-      paso: 'Grabar 2 videos pendientes este Miércoles 2 de Septiembre (10:00 a 13:00)'
+      paso: 'Grabar 2 videos pendientes el Miércoles 2 de Septiembre (11:00 AM) y cobrar S/ 50'
     },
     {
       id: uid(),
@@ -300,9 +300,9 @@ export function getFreshState(config: {
         tipo: 'ingreso' as const,
         clase: '' as const,
         categoria: 'Pack Videos Virales (8 a 16 TikToks)',
-        monto: 250,
+        monto: 200,
         fecha: '2026-08-25',
-        concepto: 'Cobro Pack 4 Videos (Pago Único Agosto) · Terminal Marino'
+        concepto: 'Adelanto Pack 4 Videos (Saldo restante S/ 50) · Terminal Marino'
       },
       {
         id: uid(),
