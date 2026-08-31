@@ -105,6 +105,7 @@ export function getFreshState(config: {
   };
 
   const idTerminal = 'term_' + uid();
+  const idTerminalShoot2 = 'term_shoot2_' + uid();
   const idPapaPlatano1 = 'papa_' + uid();
   const idPapaPlatano2 = 'papa_' + uid();
   const idPapaPlatano3 = 'papa_' + uid();
@@ -121,16 +122,28 @@ export function getFreshState(config: {
 
   const fechas: FechaGig[] = [
     {
+      id: idTerminalShoot2,
+      creado: Date.now(),
+      lugar: 'Terminal Marino (Grabación 2 Videos Faltantes)',
+      fecha: '2026-09-02',
+      horario: '10:00 a 13:00 (Miércoles)',
+      contacto: 'Cliente Directo · Terminal Marino',
+      ticket: 250,
+      sena: 250,
+      estado: 'confirmada',
+      notas: 'Rodaje para completar los 2 videos que faltan del paquete de 4 videos (S/ 250 ya 100% pagado el 25 de Agosto).\n- Fecha: Miércoles 2 de Septiembre de 2026.\n- Objetivo: Grabar 2 videos de alto impacto para TikTok.'
+    },
+    {
       id: idTerminal,
       creado: Date.now() - 86400000 * 6,
-      lugar: 'Terminal Marino',
+      lugar: 'Terminal Marino (Cobro Pack 4 Videos)',
       fecha: '2026-08-25',
-      horario: '10:00 a 13:00 (Pack 4 Videos)',
+      horario: 'Pago y Primera Sesión (2 Videos)',
       contacto: 'Cliente Directo · Terminal Marino',
       ticket: 250,
       sena: 250,
       estado: 'cobrada',
-      notas: 'Paquete Único de 4 Videos TikTok por S/ 250 (Agosto). Pagado el 25 de Agosto de 2026 (Único solo pago 100% cancelado).'
+      notas: 'Paquete de 4 Videos TikTok por S/ 250 (Agosto). Pagado el 25 de Agosto de 2026 (Único solo pago 100% cancelado). 2 videos completados, 2 videos restantes programados para el Miércoles 2 de Septiembre.'
     },
     {
       id: idPapaPlatano1,
@@ -204,12 +217,13 @@ export function getFreshState(config: {
   ];
 
   const pasos = [
-    { id: uid(), texto: 'Entregar los 4 videos completados a Terminal Marino (Pagado 25 de Agosto)', hecho: true },
-    { id: uid(), texto: 'Preparar guiones y escaleta para rodaje de este JUEVES (12:00 a 16:00) en Papá Plátano', hecho: false },
-    { id: uid(), texto: 'Facturar y cobrar mensualidad de Septiembre a Papá Plátano (Vence: 15 de Septiembre)', hecho: false }
+    { id: uid(), texto: '🎬 Rodaje en Terminal Marino: Grabar los 2 videos restantes del paquete (Miércoles 2 de Septiembre, 10:00 a 13:00)', hecho: false },
+    { id: uid(), texto: '🎬 Preparar guiones y escaleta para rodaje de este JUEVES (12:00 a 16:00) en Papá Plátano', hecho: false },
+    { id: uid(), texto: '💰 Facturar y cobrar mensualidad de Septiembre a Papá Plátano (Vence: 15 de Septiembre)', hecho: false }
   ];
 
   const objetivos = [
+    { id: uid(), texto: 'Completar los 2 videos restantes de Terminal Marino (Rodaje Miércoles 2 de Septiembre)', hecho: false },
     { id: uid(), texto: 'Completar los 6 videos mensuales de Papá Plátano (Grabaciones Jueves 12 a 4 PM)', hecho: false },
     { id: uid(), texto: 'Pack 4 videos Terminal Marino (Cobrado S/ 250 el 25/08)', hecho: true },
     { id: uid(), texto: 'Cobro de mensualidad de Septiembre Papá Plátano (Fecha límite: 15 de Septiembre)', hecho: false }
@@ -218,21 +232,28 @@ export function getFreshState(config: {
   const notas = [
     {
       id: uid(),
-      texto: '📌 CLIENTE MENSUAL: PAPÁ PLÁTANO\n- Plan: 6 videos de TikTok al mes por S/ 400.\n- Modalidad de Pago: Paga cada 15 de cada mes.\n  * Mes Agosto: Pagado el 15 de Agosto (S/ 400).\n  * Mes Septiembre: Cobro programado para el 15 de Septiembre (S/ 400).\n- Rodajes: TODOS LOS JUEVES de 12:00 PM a 4:00 PM (12 a 16 hrs) - 1 vez x semana.',
-      color: 'c1' as const,
+      texto: '📌 CLIENTE ÚNICO: TERMINAL MARINO\n- Paquete: 4 videos de TikTok por S/ 250 (Único pago 100% cancelado el 25/08).\n- Avance de videos: 2 videos listos / 2 videos pendientes de grabación.\n- Día de Grabación: MIÉRCOLES 2 DE SEPTIEMBRE de 2026 (10:00 a 13:00).\n- Objetivo: Finalizar rodaje de los 2 videos que faltan para entrega final.',
+      color: 'c2' as const,
       pin: true,
       creado: Date.now()
     },
     {
       id: uid(),
-      texto: '📌 CLIENTE ÚNICO: TERMINAL MARINO\n- Paquete: 4 videos de TikTok por S/ 250.\n- Modalidad: Único solo pago (Mes de Agosto).\n- Fecha de Pago: 25 de Agosto de 2026.\n- Estado: 100% Cobrado y Cancelado.',
-      color: 'c2' as const,
+      texto: '📌 CLIENTE MENSUAL: PAPÁ PLÁTANO\n- Plan: 6 videos de TikTok al mes por S/ 400.\n- Modalidad de Pago: Paga cada 15 de cada mes.\n  * Mes Agosto: Pagado el 15 de Agosto (S/ 400).\n  * Mes Septiembre: Cobro programado para el 15 de Septiembre (S/ 400).\n- Rodajes: TODOS LOS JUEVES de 12:00 PM a 4:00 PM (12 a 16 hrs) - 1 vez x semana.',
+      color: 'c1' as const,
       pin: true,
       creado: Date.now()
     }
   ];
 
   const recordatorios = [
+    {
+      id: uid(),
+      texto: '🎬 Rodaje TERMINAL MARINO: Grabar 2 videos restantes (Miércoles 2 de Septiembre, 10:00 AM a 1:00 PM)',
+      cuando: '2026-09-02T10:00',
+      hecho: false,
+      creado: Date.now()
+    },
     {
       id: uid(),
       texto: '🎬 Rodaje semanal en PAPÁ PLÁTANO (Jueves de 12:00 PM a 4:00 PM)',
@@ -253,20 +274,20 @@ export function getFreshState(config: {
     {
       id: uid(),
       creado: Date.now(),
+      nombre: 'Terminal Marino · Pack 4 Videos (S/ 250 Pagado)',
+      desc: 'Producción de 4 videos para TikTok. 2 grabados, 2 restantes por grabar el Miércoles 2 de Septiembre.',
+      estado: 'activo' as const,
+      prio: 'alta' as const,
+      paso: 'Grabar 2 videos pendientes este Miércoles 2 de Septiembre (10:00 a 13:00)'
+    },
+    {
+      id: uid(),
+      creado: Date.now(),
       nombre: 'Papá Plátano · Retainer Mensual 6 Videos',
       desc: 'Producción continua de 6 videos mensuales. Rodajes todos los jueves de 12 a 4 PM. Pago recurrente cada 15.',
       estado: 'activo' as const,
       prio: 'alta' as const,
       paso: 'Grabar este Jueves (12:00 a 16:00) y cobrar Septiembre el 15/09'
-    },
-    {
-      id: uid(),
-      creado: Date.now(),
-      nombre: 'Terminal Marino · Pack 4 Videos',
-      desc: 'Producción de 4 videos para TikTok. Cobrado S/ 250 el día 25 de Agosto.',
-      estado: 'activo' as const,
-      prio: 'media' as const,
-      paso: 'Entregado y 100% cancelado'
     }
   ];
 
