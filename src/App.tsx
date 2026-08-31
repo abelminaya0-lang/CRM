@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { DJState, EstadoFecha, FechaGig } from './types';
-import { getFreshState, getSeedData, isoWeek } from './utils/crmData';
+import { getFreshState, getSeedData, isoWeek, setGlobalHidePrices } from './utils/crmData';
 import {
   saveStateToFirestore,
   loadStateFromFirestore,
@@ -27,6 +27,14 @@ import { Toast } from './components/Toast';
 const STORAGE_KEY = 'ivacreativa_tiktok_crm_v4';
 
 export function App() {
+  const [hidePrices, setHidePrices] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('ivacreativa_hide_prices') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
   const [state, setState] = useState<DJState>(() => {
     try {
       localStorage.removeItem('ivacreativa_tiktok_crm_v1');
@@ -167,6 +175,24 @@ export function App() {
     }, 2600);
   }, []);
 
+  // Sync privacy mode with localStorage and global formatter
+  useEffect(() => {
+    setGlobalHidePrices(hidePrices);
+    try {
+      localStorage.setItem('ivacreativa_hide_prices', String(hidePrices));
+    } catch (e) {
+      console.error('Error saving privacy state to localStorage', e);
+    }
+  }, [hidePrices]);
+
+  const handleToggleHidePrices = useCallback(() => {
+    setHidePrices((prev) => {
+      const next = !prev;
+      showToast(next ? 'Modo Privacidad activado: Montos ocultos' : 'Modo Privacidad desactivado: Montos visibles');
+      return next;
+    });
+  }, [showToast]);
+
   // Handlers for Dates / Shoots
   const handleOpenNuevaFecha = (datePrefill?: string) => {
     setSelectedFechaId(null);
@@ -227,6 +253,8 @@ export function App() {
         isFirebaseActive={true}
         isSupabaseConfigured={isSupabaseConfigured}
         isGcalConnected={isGcalConnected}
+        hidePrices={hidePrices}
+        onToggleHidePrices={handleToggleHidePrices}
         onOpenAjustes={() => setModalAjustesOpen(true)}
         onOpenAsistente={() => setModalAsistenteOpen(true)}
         onOpenNuevaFecha={() => handleOpenNuevaFecha()}
@@ -244,6 +272,8 @@ export function App() {
         {activeTab === 'panel' && (
           <PanelTab
             state={state}
+            hidePrices={hidePrices}
+            onToggleHidePrices={handleToggleHidePrices}
             onGotoTab={(tab) => setActiveTab(tab)}
             onOpenNuevaFecha={() => handleOpenNuevaFecha()}
           />

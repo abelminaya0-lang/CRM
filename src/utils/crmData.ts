@@ -70,8 +70,22 @@ export function isoWeek(d: Date): string {
   return dt.getUTCFullYear() + '-W' + String(week).padStart(2, '0');
 }
 
-export function money(n: number, currency: string = "S/"): string {
+let globalHidePrices = false;
+
+export function setGlobalHidePrices(hide: boolean) {
+  globalHidePrices = hide;
+}
+
+export function getGlobalHidePrices(): boolean {
+  return globalHidePrices;
+}
+
+export function money(n: number, currency: string = "S/", hide?: boolean): string {
+  const isHidden = hide !== undefined ? hide : globalHidePrices;
   const symbol = currency || "S/";
+  if (isHidden) {
+    return `${symbol} ••••`;
+  }
   const val = Math.round(+n || 0).toLocaleString('es-PE');
   return `${symbol} ${val}`;
 }

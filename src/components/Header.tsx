@@ -1,4 +1,5 @@
 import React from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 import { LogoIvaCreativa } from './LogoIvaCreativa';
 
 interface HeaderProps {
@@ -7,6 +8,8 @@ interface HeaderProps {
   isFirebaseActive?: boolean;
   isGcalConnected?: boolean;
   isSupabaseConfigured?: boolean;
+  hidePrices?: boolean;
+  onToggleHidePrices?: () => void;
   onOpenAjustes: () => void;
   onOpenAsistente: () => void;
   onOpenNuevaFecha: () => void;
@@ -18,6 +21,8 @@ export const Header: React.FC<HeaderProps> = ({
   isFirebaseActive = true,
   isGcalConnected,
   isSupabaseConfigured,
+  hidePrices = false,
+  onToggleHidePrices,
   onOpenAjustes,
   onOpenAsistente,
   onOpenNuevaFecha,
@@ -30,6 +35,33 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       <div className="top-actions flex gap-2.5 items-center flex-wrap">
+        {/* Privacy Eye Toggle Button */}
+        {onToggleHidePrices && (
+          <button
+            type="button"
+            onClick={onToggleHidePrices}
+            className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-all flex items-center gap-1.5 ${
+              hidePrices
+                ? 'bg-amber-950/40 border-amber-500/50 text-amber-300 hover:bg-amber-900/50 shadow-[0_0_12px_rgba(245,158,11,0.15)]'
+                : 'bg-[#14141e] border-[#2a2a3c] text-zinc-300 hover:text-white hover:border-[#ef4444]'
+            }`}
+            title={hidePrices ? 'Precios Ocultos (Haz clic para mostrar montos)' : 'Ocultar Precios / Modo Privacidad'}
+            id="btnPrivacyEye"
+          >
+            {hidePrices ? (
+              <>
+                <EyeOff className="w-3.5 h-3.5 text-amber-400" />
+                <span className="font-mono text-[11px]">Oculto ••••</span>
+              </>
+            ) : (
+              <>
+                <Eye className="w-3.5 h-3.5 text-zinc-400" />
+                <span className="text-[11px] hidden sm:inline">Privacidad</span>
+              </>
+            )}
+          </button>
+        )}
+
         {/* Cloud Sync & Google Calendar Indicators */}
         <div className="hidden sm:flex items-center gap-2 text-[11px] font-mono">
           <button
