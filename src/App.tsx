@@ -24,22 +24,21 @@ import { ModalAsistente } from './components/ModalAsistente';
 import { ModalAjustes } from './components/ModalAjustes';
 import { Toast } from './components/Toast';
 
-const STORAGE_KEY = 'ivacreativa_tiktok_crm_v2';
+const STORAGE_KEY = 'ivacreativa_tiktok_crm_v3';
 
 export function App() {
   const [state, setState] = useState<DJState>(() => {
     try {
-      // Clear legacy storage keys if any
       localStorage.removeItem('ivacreativa_tiktok_crm_v1');
+      localStorage.removeItem('ivacreativa_tiktok_crm_v2');
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        // If parsed state still contains demo data from old sessions, reset to clean
         const hasOldDemo = parsed.fechas?.some((f: any) => f.lugar?.includes('Fuego & Brasa') || f.lugar?.includes('OdontoPro'));
         if (!hasOldDemo) {
           const currentWeek = isoWeek(new Date());
           if (parsed.contenido && parsed.contenido.semana !== currentWeek) {
-            parsed.contenido = { semana: currentWeek, hechos: 0 };
+            parsed.contenido = { semana: currentWeek, hechos: parsed.contenido.hechos || 0 };
           }
           return parsed;
         }
@@ -47,13 +46,13 @@ export function App() {
     } catch (e) {
       console.error('Error loading CRM state from localStorage', e);
     }
-    // Clean initial state for real agency data
+    // Clean initial state with real clients: Terminal Marino & Papá Plátano
     return getFreshState({
       nombre: 'IVA CREATIVA',
       handle: '@ivacreativa.pe',
       moneda: 'S/',
-      metaContenido: 12,
-      metaFechas: 6,
+      metaContenido: 10,
+      metaFechas: 4,
     });
   });
 
@@ -84,20 +83,32 @@ export function App() {
         if (isMounted && cloudResult.success && cloudResult.state) {
           const cloudState = cloudResult.state;
           const hasOldDemo = cloudState.fechas?.some((f: any) => f.lugar?.includes('Fuego & Brasa') || f.lugar?.includes('OdontoPro'));
-          if (!hasOldDemo) {
+          const isEmpty = !cloudState.fechas || cloudState.fechas.length === 0;
+
+          if (!hasOldDemo && !isEmpty) {
             setState(cloudState);
           } else {
-            // Overwrite cloud demo state with clean state
-            const clean = getFreshState({
+            // Overwrite with clean state containing Terminal Marino & Papá Plátano
+            const fresh = getFreshState({
               nombre: cloudState.perfil?.nombre || 'IVA CREATIVA',
               handle: cloudState.perfil?.handle || '@ivacreativa.pe',
               moneda: cloudState.perfil?.moneda || 'S/',
-              metaContenido: cloudState.perfil?.metaContenido || 12,
-              metaFechas: cloudState.perfil?.metaFechas || 6,
+              metaContenido: cloudState.perfil?.metaContenido || 10,
+              metaFechas: cloudState.perfil?.metaFechas || 4,
             });
-            setState(clean);
-            await saveStateToFirestore(clean);
+            setState(fresh);
+            await saveStateToFirestore(fresh);
           }
+        } else if (isMounted && (!cloudResult.success || !cloudResult.state)) {
+          // If no cloud document exists yet, initialize and push
+          const fresh = getFreshState({
+            nombre: 'IVA CREATIVA',
+            handle: '@ivacreativa.pe',
+            moneda: 'S/',
+            metaContenido: 10,
+            metaFechas: 4,
+          });
+          await saveStateToFirestore(fresh);
         }
       } catch (err) {
         console.warn('Initial Firebase fetch notice:', err);

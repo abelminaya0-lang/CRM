@@ -1,4 +1,4 @@
-import { DJState, EstadoFecha } from '../types';
+import { DJState, EstadoFecha, FechaGig } from '../types';
 
 export const ESTADOS: Record<EstadoFecha, { label: string; color: string; dot: string }> = {
   consulta:   { label: "Prospecto / Lead",   color: "var(--muted)",    dot: "#94a3b8" },
@@ -83,23 +83,215 @@ export function getFreshState(config: {
   metaContenido: number;
   metaFechas: number;
 }): DJState {
+  const hoy = new Date();
+  const iso = (off: number) => {
+    const d = new Date(hoy);
+    d.setDate(d.getDate() + off);
+    return d.toISOString().slice(0, 10);
+  };
+
+  const idTerminal = 'term_' + uid();
+  const idPapaPlatano1 = 'papa_' + uid();
+  const idPapaPlatano2 = 'papa_' + uid();
+  const idPapaPlatano3 = 'papa_' + uid();
+  const idPapaPlatano4 = 'papa_' + uid();
+
+  // Next Thursday calculation
+  const getNextThursday = (weekOffset: number = 0) => {
+    const d = new Date();
+    const day = d.getDay(); // 0 is Sunday, 4 is Thursday
+    const diff = (4 - day + 7) % 7 || (day === 4 ? 0 : 7);
+    d.setDate(d.getDate() + diff + weekOffset * 7);
+    return d.toISOString().slice(0, 10);
+  };
+
+  const fechas: FechaGig[] = [
+    {
+      id: idTerminal,
+      creado: Date.now() - 86400000 * 2,
+      lugar: 'Terminal Marino',
+      fecha: iso(0),
+      horario: '10:00 a 13:00 (Pack 4 Videos)',
+      contacto: 'Cliente Directo · Terminal Marino',
+      ticket: 250,
+      sena: 250,
+      estado: 'cobrada',
+      notas: 'Paquete Único de 4 Videos TikTok por S/ 250. Pago completado al 100% (Pago Único cancelado).'
+    },
+    {
+      id: idPapaPlatano1,
+      creado: Date.now() - 86400000,
+      lugar: 'Papá Plátano',
+      fecha: getNextThursday(0),
+      horario: '12:00 a 16:00 (Jueves)',
+      contacto: 'Cliente Mensual · 1 vez x semana',
+      ticket: 400,
+      sena: 400,
+      estado: 'confirmada',
+      notas: 'Cliente Mensual (Retainer):\n- 6 videos para TikTok al mes por S/ 400.\n- Grabación: 1 vez por semana los días JUEVES de 12:00 PM a 4:00 PM (12 a 16 hrs).\n- Sesión 1 del mes.'
+    },
+    {
+      id: idPapaPlatano2,
+      creado: Date.now(),
+      lugar: 'Papá Plátano (Rodaje Semanal)',
+      fecha: getNextThursday(1),
+      horario: '12:00 a 16:00 (Jueves)',
+      contacto: 'Cliente Mensual · 1 vez x semana',
+      ticket: 0,
+      sena: 0,
+      estado: 'reservada',
+      notas: 'Rodaje Semanal Jueves (12:00 a 16:00). Sesión 2 del mes (incluido en paquete mensual de S/ 400).'
+    },
+    {
+      id: idPapaPlatano3,
+      creado: Date.now(),
+      lugar: 'Papá Plátano (Rodaje Semanal)',
+      fecha: getNextThursday(2),
+      horario: '12:00 a 16:00 (Jueves)',
+      contacto: 'Cliente Mensual · 1 vez x semana',
+      ticket: 0,
+      sena: 0,
+      estado: 'reservada',
+      notas: 'Rodaje Semanal Jueves (12:00 a 16:00). Sesión 3 del mes (incluido en paquete mensual de S/ 400).'
+    },
+    {
+      id: idPapaPlatano4,
+      creado: Date.now(),
+      lugar: 'Papá Plátano (Rodaje Semanal)',
+      fecha: getNextThursday(3),
+      horario: '12:00 a 16:00 (Jueves)',
+      contacto: 'Cliente Mensual · 1 vez x semana',
+      ticket: 0,
+      sena: 0,
+      estado: 'reservada',
+      notas: 'Rodaje Semanal Jueves (12:00 a 16:00). Sesión 4 del mes (incluido en paquete mensual de S/ 400).'
+    }
+  ];
+
+  const pagos = [
+    {
+      id: uid(),
+      fechaId: idTerminal,
+      monto: 250,
+      fecha: iso(0),
+      concepto: 'Pago Único 100% · Pack 4 Videos TikTok (Terminal Marino)',
+      metodo: 'Transferencia / Efectivo',
+      creado: Date.now() - 86400000
+    },
+    {
+      id: uid(),
+      fechaId: idPapaPlatano1,
+      monto: 400,
+      fecha: iso(0),
+      concepto: 'Pago Mensualidad · 6 Videos TikTok (Papá Plátano)',
+      metodo: 'Transferencia / Yape',
+      creado: Date.now()
+    }
+  ];
+
+  const pasos = [
+    { id: uid(), texto: 'Entregar los 4 videos editados a Terminal Marino', hecho: false },
+    { id: uid(), texto: 'Preparar escaleta y guiones para rodaje de los Jueves (12 a 4 PM) en Papá Plátano', hecho: false },
+    { id: uid(), texto: 'Cargar equipos (cámara, trípode, micrófonos, luces) para rodaje de Papá Plátano', hecho: false }
+  ];
+
+  const objetivos = [
+    { id: uid(), texto: 'Completar los 6 videos mensuales de Papá Plátano (Grabaciones Jueves 12 a 4 PM)', hecho: false },
+    { id: uid(), texto: 'Entregar pack de 4 videos a Terminal Marino (S/ 250 cobrados)', hecho: true },
+    { id: uid(), texto: 'Cerrar 2 nuevos clientes en paquete mensual de TikTok', hecho: false }
+  ];
+
+  const notas = [
+    {
+      id: uid(),
+      texto: '📌 CLIENTE: PAPÁ PLÁTANO\n- Formato: Mensual (Retainer recurrente)\n- Paquete: 6 videos de TikTok por S/ 400 al mes.\n- Horario de grabación: TODOS LOS JUEVES de 12:00 a 16:00 (12 PM a 4 PM).\n- Frecuencia: 1 vez por semana.',
+      color: 'c1' as const,
+      pin: true,
+      creado: Date.now()
+    },
+    {
+      id: uid(),
+      texto: '📌 CLIENTE: TERMINAL MARINO\n- Formato: Paquete Único\n- Paquete: 4 videos de TikTok por S/ 250.\n- Estado de pago: 100% Pagado (Cobrado S/ 250).',
+      color: 'c2' as const,
+      pin: true,
+      creado: Date.now()
+    }
+  ];
+
+  const recordatorios = [
+    {
+      id: uid(),
+      texto: '🎬 Rodaje semanal en PAPÁ PLÁTANO (Jueves de 12:00 PM a 4:00 PM)',
+      cuando: `${getNextThursday(0)}T12:00`,
+      hecho: false,
+      creado: Date.now()
+    }
+  ];
+
+  const proyectos = [
+    {
+      id: uid(),
+      creado: Date.now(),
+      nombre: 'Papá Plátano · Retainer Mensual 6 Videos',
+      desc: 'Producción continua de 6 videos mensuales. Rodajes fijos todos los jueves de 12:00 a 16:00.',
+      estado: 'activo' as const,
+      prio: 'alta' as const,
+      paso: 'Grabar contenido este Jueves de 12 a 4 PM'
+    },
+    {
+      id: uid(),
+      creado: Date.now(),
+      nombre: 'Terminal Marino · Pack 4 Videos',
+      desc: 'Producción y entrega de 4 videos de alto impacto para TikTok (S/ 250 pagado).',
+      estado: 'activo' as const,
+      prio: 'media' as const,
+      paso: 'Edición final y entrega'
+    }
+  ];
+
+  const finanzas = {
+    saldoInicial: 0,
+    movimientos: [
+      {
+        id: uid(),
+        creado: Date.now() - 86400000,
+        tipo: 'ingreso' as const,
+        clase: '' as const,
+        categoria: 'Pack Videos Virales (8 a 16 TikToks)',
+        monto: 250,
+        fecha: iso(0),
+        concepto: 'Cobro Pack 4 Videos · Terminal Marino'
+      },
+      {
+        id: uid(),
+        creado: Date.now(),
+        tipo: 'ingreso' as const,
+        clase: '' as const,
+        categoria: 'Paquete Mensual TikTok (Retainer 12 Videos)',
+        monto: 400,
+        fecha: iso(0),
+        concepto: 'Cobro Mensualidad (6 videos) · Papá Plátano'
+      }
+    ]
+  };
+
   return {
     perfil: {
       nombre: config.nombre || 'IVA CREATIVA',
       handle: config.handle || '@ivacreativa.pe',
       moneda: config.moneda || 'S/',
-      metaContenido: config.metaContenido || 12,
-      metaFechas: config.metaFechas || 6
+      metaContenido: config.metaContenido || 10,
+      metaFechas: config.metaFechas || 4
     },
-    fechas: [],
-    pagos: [],
-    pasos: [],
-    objetivos: [],
-    notas: [],
-    recordatorios: [],
-    proyectos: [],
-    finanzas: { saldoInicial: 0, movimientos: [] },
-    contenido: { semana: isoWeek(new Date()), hechos: 0 }
+    fechas,
+    pagos,
+    pasos,
+    objetivos,
+    notas,
+    recordatorios,
+    proyectos,
+    finanzas,
+    contenido: { semana: isoWeek(new Date()), hechos: 4 }
   };
 }
 
