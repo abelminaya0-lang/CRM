@@ -63,14 +63,13 @@ export const FechasTab: React.FC<FechasTabProps> = ({
     <section className="screen active" id="tab-fechas">
       <div className="row-head">
         <div>
-          <div className="sect-title">Tus fechas</div>
+          <div className="sect-title">Pipeline de Rodajes & Clientes</div>
           <div className="sect-sub" style={{ margin: 0 }}>
-            Arrastrá las tarjetas entre columnas, o cambiá el estado desde el
-            selector de cada una. Tocá una tarjeta para editar todo.
+            Control de producción: de prospecto a guion aprobado, grabación en locación y entrega final de videos.
           </div>
         </div>
         <button className="btn sm" id="btnNueva2" onClick={onOpenNuevaFecha}>
-          ＋ Nueva fecha
+          ＋ Nuevo Cliente / Rodaje
         </button>
       </div>
 
@@ -113,7 +112,7 @@ export const FechasTab: React.FC<FechasTabProps> = ({
               ) : (
                 items.map((f) => {
                   const d = f.fecha ? parseISO(f.fecha) : null;
-                  const fechaTxt = d ? `${d.getDate()} ${MESES[d.getMonth()]}` : 'sin fecha';
+                  const fechaTxt = d ? `${d.getDate()} ${MESES[d.getMonth()]}` : 'Sin fecha';
                   const saldo = Math.max(0, (+f.ticket || 0) - pagosDe(f.id));
                   const isDragging = draggedId === f.id;
 
@@ -133,15 +132,15 @@ export const FechasTab: React.FC<FechasTabProps> = ({
                         ) : null}
                       </div>
 
-                      <div className="g-place">{f.lugar || 'Sin nombre'}</div>
+                      <div className="g-place">{f.lugar || 'Cliente / Negocio'}</div>
 
                       <div className="g-meta">
                         {f.horario && <span>🕒 {f.horario}</span>}
-                        {f.contacto && <span>👤 {f.contacto}</span>}
+                        {f.contacto && <span>📱 {f.contacto}</span>}
                       </div>
 
                       {f.ticket && saldo > 0 ? (
-                        <span className="saldo-tag">Saldo: {money(saldo, currency)}</span>
+                        <span className="saldo-tag">Saldo pendiente: {money(saldo, currency)}</span>
                       ) : null}
 
                       <div className="g-foot">
@@ -162,7 +161,7 @@ export const FechasTab: React.FC<FechasTabProps> = ({
                         </select>
                         <button
                           className="mini pay"
-                          title="Registrar pago"
+                          title="Registrar cobro / anticipo"
                           onClick={(e) => {
                             e.stopPropagation();
                             onPrefillPago(f);
@@ -172,7 +171,7 @@ export const FechasTab: React.FC<FechasTabProps> = ({
                         </button>
                         <button
                           className="mini edit"
-                          title="Editar"
+                          title="Editar detalles"
                           onClick={(e) => {
                             e.stopPropagation();
                             onOpenEditFecha(f.id);

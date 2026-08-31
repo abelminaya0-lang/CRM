@@ -1,21 +1,31 @@
 import React, { useState } from 'react';
 import { DJState } from '../types';
 import { DOW, ESTADOS, MESES_LARGO, todayISO } from '../utils/crmData';
+import {
+  requestGoogleCalendarAuth,
+  syncAllGigsToGoogleCalendar,
+  getCachedGoogleToken,
+} from '../utils/googleCalendar';
 
 interface CalendarioTabProps {
   state: DJState;
   onOpenFecha: (id?: string | null, prefillDate?: string) => void;
+  onUpdateState?: (updater: (prev: DJState) => DJState) => void;
+  onShowToast?: (msg: string) => void;
 }
 
 export const CalendarioTab: React.FC<CalendarioTabProps> = ({
   state,
   onOpenFecha,
+  onUpdateState,
+  onShowToast,
 }) => {
   const [currentDate, setCurrentDate] = useState(() => {
     const d = new Date();
     d.setDate(1);
     return d;
   });
+  const [syncing, setSyncing] = useState(false);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -46,19 +56,68 @@ export const CalendarioTab: React.FC<CalendarioTabProps> = ({
     }
   };
 
+  const handleSyncGoogleCalendar = async () => {
+    let token = getCachedGoogleToken();
+    if (!token) {
+      const authRes = await requestGoogleCalendarAuth();
+      if (!authRes.success || !authRes.token) {
+        if (onShowToast) {
+          onShowToast(authRes.error || 'Autorización de Google Calendar cancelada');
+        } else {
+          alert(authRes.error || 'Autorización de Google cancelada');
+        }
+        return;
+      }
+      token = authRes.token;
+    }
+
+    setSyncing(true);
+    const res = await syncAllGigsToGoogleCalendar(token, state.fechas, state.perfil.moneda);
+    setSyncing(false);
+
+    if (res.success) {
+      if (onUpdateState) {
+        onUpdateState((prev) => ({ ...prev, fechas: res.updatedGigs }));
+      }
+      onShowToast?.(`¡${res.syncedCount} rodajes sincronizados con tu Google Calendar! ✓`);
+    } else {
+      onShowToast?.(`Error: ${res.error || 'No se pudo sincronizar'}`);
+    }
+  };
+
   return (
     <section className="screen active" id="tab-calendario">
       <div className="card">
-        <div className="cal-head">
-          <button className="iconbtn" id="calPrev" onClick={handlePrev}>
-            ←
-          </button>
-          <div className="cal-title" id="calTitle">
-            {title}
+        <div className="cal-head flex items-center justify-between flex-wrap gap-3">
+          <div className="flex items-center gap-2">
+            <button className="iconbtn" id="calPrev" onClick={handlePrev}>
+              ←
+            </button>
+            <div className="cal-title" id="calTitle">
+              {title}
+            </div>
+            <button className="iconbtn" id="calNext" onClick={handleNext}>
+              →
+            </button>
           </div>
-          <button className="iconbtn" id="calNext" onClick={handleNext}>
-            →
-          </button>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className="btn sm ghost border border-[#ef4444]/40 hover:bg-[#ef4444]/10 text-white flex items-center gap-1.5"
+              disabled={syncing}
+              onClick={handleSyncGoogleCalendar}
+            >
+              <span>📅</span>
+              <span>{syncing ? 'Sincronizando...' : 'Sincronizar Google Calendar'}</span>
+            </button>
+            <button
+              className="btn sm bg-[#ef4444] text-white"
+              onClick={() => onOpenFecha(null, todayStr)}
+            >
+              ＋ Agendar Rodaje
+            </button>
+          </div>
         </div>
 
         <div className="cal-grid" id="calGrid">
@@ -96,11 +155,16 @@ export const CalendarioTab: React.FC<CalendarioTabProps> = ({
                   return (
                     <div
                       key={f.id}
-                      className="cal-chip"
+                      className="cal-chip flex items-center justify-between gap-1"
                       style={{ borderLeftColor: est.dot }}
-                      title={f.lugar}
+                      title={`${f.lugar} (${f.horario || 'Sin horario'})`}
                     >
-                      {f.lugar || 'Fecha'}
+                      <span className="truncate">{f.lugar || 'Fecha'}</span>
+                      {f.googleCalendarSynced && (
+                        <span className="text-[10px] text-red-400" title="Sincronizado con Google Calendar">
+                          ✓
+                        </span>
+                      )}
                     </div>
                   );
                 })}

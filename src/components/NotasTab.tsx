@@ -42,7 +42,7 @@ export const NotasTab: React.FC<NotasTabProps> = ({
     }));
 
     setNotaTexto('');
-    onShowToast('Nota guardada ✓');
+    onShowToast('Guion / Nota guardada ✓');
   };
 
   const handleTogglePinNota = (id: string) => {
@@ -57,7 +57,7 @@ export const NotasTab: React.FC<NotasTabProps> = ({
   const handleEditNota = (id: string) => {
     const n = (state.notas || []).find((x) => x.id === id);
     if (!n) return;
-    const nuevo = window.prompt('Editar nota:', n.texto);
+    const nuevo = window.prompt('Editar nota o guion:', n.texto);
     if (nuevo !== null) {
       onUpdateState((prev) => ({
         ...prev,
@@ -96,7 +96,7 @@ export const NotasTab: React.FC<NotasTabProps> = ({
 
     setRecTexto('');
     setRecCuando('');
-    onShowToast('Recordatorio guardado ✓');
+    onShowToast('Recordatorio de rodaje/cobro guardado ✓');
   };
 
   const handleToggleRec = (id: string) => {
@@ -154,9 +154,9 @@ export const NotasTab: React.FC<NotasTabProps> = ({
   };
 
   const PROY_ESTADOS_LABEL: Record<string, string> = {
-    idea: 'Idea',
-    probando: 'Probando',
-    activo: 'Activo',
+    idea: 'Idea de Formato',
+    probando: 'En Prueba / Test',
+    activo: 'Paquete Activo',
     pausado: 'Pausado',
     descartado: 'Descartado',
   };
@@ -164,16 +164,16 @@ export const NotasTab: React.FC<NotasTabProps> = ({
   return (
     <section className="screen active" id="tab-notas">
       <div className="grid-2" style={{ marginBottom: '14px' }}>
-        {/* Notas rápidas */}
+        {/* Guiones, Hooks & Notas rápidas */}
         <div className="card">
           <span className="eyebrow" style={{ marginBottom: '14px' }}>
-            Notas rápidas
+            Guiones, Hooks Virales & Notas de Rodaje
           </span>
           <form onSubmit={handleAddNota} style={{ marginBottom: '16px' }}>
             <div className="field" style={{ marginBottom: '8px' }}>
               <textarea
                 id="notaTexto"
-                placeholder="Escribí una idea, contacto, requerimiento técnico..."
+                placeholder="Escribe un gancho de 3 segundos, estructura de video, requerimientos del cliente..."
                 value={notaTexto}
                 onChange={(e) => setNotaTexto(e.target.value)}
                 style={{ minHeight: '80px' }}
@@ -199,14 +199,14 @@ export const NotasTab: React.FC<NotasTabProps> = ({
                       borderRadius: '50%',
                       background:
                         c === 'c1'
-                          ? 'var(--accent)'
+                          ? '#ef4444'
                           : c === 'c2'
-                          ? 'var(--mid)'
+                          ? '#fbbf24'
                           : c === 'c3'
-                          ? 'var(--high)'
+                          ? '#34d399'
                           : c === 'c4'
-                          ? 'var(--accent-2)'
-                          : '#4db8ff',
+                          ? '#f87171'
+                          : '#a855f7',
                       cursor: 'pointer',
                       border: 'none',
                     }}
@@ -215,7 +215,7 @@ export const NotasTab: React.FC<NotasTabProps> = ({
                 ))}
               </div>
               <button className="btn sm" type="submit">
-                Guardar nota
+                ＋ Guardar Nota
               </button>
             </div>
           </form>
@@ -226,7 +226,7 @@ export const NotasTab: React.FC<NotasTabProps> = ({
                 className="empty"
                 style={{ gridColumn: '1 / -1', padding: '20px' }}
               >
-                <p>No tenés notas guardadas.</p>
+                <p>No tienes notas ni guiones guardados.</p>
               </div>
             ) : (
               sortedNotas.map((n) => (
@@ -237,7 +237,7 @@ export const NotasTab: React.FC<NotasTabProps> = ({
                   <div className="n-text">{n.texto}</div>
                   <div className="n-foot">
                     <span className="n-date">
-                      {new Date(n.creado).toLocaleDateString('es-AR')}
+                      {new Date(n.creado).toLocaleDateString('es-PE')}
                     </span>
                     <div className="n-actions">
                       <button
@@ -267,16 +267,16 @@ export const NotasTab: React.FC<NotasTabProps> = ({
           </div>
         </div>
 
-        {/* Recordatorios con fecha */}
+        {/* Recordatorios de Rodajes & Cobros */}
         <div className="card">
           <span className="eyebrow" style={{ marginBottom: '14px' }}>
-            Recordatorios con fecha
+            Recordatorios de Grabación & Cobros
           </span>
           <form onSubmit={handleAddRec} style={{ marginBottom: '16px' }}>
             <div className="field" style={{ marginBottom: '8px' }}>
               <input
                 id="recTexto"
-                placeholder="Qué tenés que recordar..."
+                placeholder="Ej: Confirmar vestuario y productos con el cliente..."
                 value={recTexto}
                 onChange={(e) => setRecTexto(e.target.value)}
               />
@@ -296,7 +296,7 @@ export const NotasTab: React.FC<NotasTabProps> = ({
                 }}
               />
               <button className="btn sm block" type="submit">
-                Agregar
+                ＋ Agregar
               </button>
             </div>
           </form>
@@ -304,7 +304,7 @@ export const NotasTab: React.FC<NotasTabProps> = ({
           <ul className="rec-list" id="listaRec">
             {sortedRecs.length === 0 ? (
               <li className="rec-item" style={{ opacity: 0.6 }}>
-                <span className="r-text">No tenés recordatorios pendientes.</span>
+                <span className="r-text">No tienes recordatorios pendientes.</span>
               </li>
             ) : (
               sortedRecs.map((r) => {
@@ -341,26 +341,25 @@ export const NotasTab: React.FC<NotasTabProps> = ({
         </div>
       </div>
 
-      {/* Proyectos e Ideas de Negocio */}
+      {/* Ofertas de Servicios & Paquetes de la Agencia */}
       <div className="card">
         <div className="row-head">
           <span className="eyebrow" style={{ margin: 0 }}>
-            Proyectos e ideas de negocio
+            Ofertas, Paquetes & Nuevos Formatos de Video
           </span>
           <button
             className="btn ghost sm"
             id="btnNuevoProy"
             onClick={onOpenNuevoProyecto}
           >
-            ＋ Nuevo proyecto
+            ＋ Nueva Oferta / Paquete
           </button>
         </div>
 
         <div className="proy-board" id="boardProy">
           {(state.proyectos || []).length === 0 ? (
             <div className="proy-empty">
-              No tenés proyectos cargados. Sumá tu primera idea con el botón de
-              arriba.
+              No tienes paquetes ni ofertas registradas. Crea una con el botón superior.
             </div>
           ) : (
             state.proyectos.map((p) => (
@@ -374,14 +373,14 @@ export const NotasTab: React.FC<NotasTabProps> = ({
                     {PROY_ESTADOS_LABEL[p.estado] || p.estado}
                   </span>
                   <span className="p-prio" title={`Prioridad ${p.prio}`}>
-                    {p.prio === 'alta' ? '🔴' : p.prio === 'media' ? '🟡' : '🟢'}
+                    {p.prio === 'alta' ? '🔴 Alta' : p.prio === 'media' ? '🟡 Media' : '🟢 Normal'}
                   </span>
                 </div>
                 <div className="p-name">{p.nombre || 'Sin título'}</div>
                 {p.desc && <div className="p-desc">{p.desc}</div>}
                 {p.paso && (
                   <div className="p-paso">
-                    <span>➔</span> {p.paso}
+                    <span>➔ Siguiente paso:</span> {p.paso}
                   </div>
                 )}
               </div>

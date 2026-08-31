@@ -3,14 +3,16 @@ export type EstadoFecha = 'consulta' | 'reservada' | 'confirmada' | 'cobrada' | 
 export interface FechaGig {
   id: string;
   creado: number;
-  lugar: string;
-  fecha: string; // YYYY-MM-DD
-  horario: string;
-  contacto: string;
-  ticket: number;
-  sena: number;
+  lugar: string; // Negocio / Cliente / Marca / Locación
+  fecha: string; // YYYY-MM-DD (Fecha de Rodaje / Grabación)
+  horario: string; // Horario de Grabación
+  contacto: string; // Contacto / WhatsApp del Negocio
+  ticket: number; // Tarifa / Paquete de Videos en Soles
+  sena: number; // Adelanto / Seña pagada
   estado: EstadoFecha;
-  notas: string;
+  notas: string; // Guiones, hooks, cantidad de TikToks, estilo de edición
+  googleEventId?: string;
+  googleCalendarSynced?: boolean;
 }
 
 export interface Pago {
@@ -75,8 +77,8 @@ export interface PerfilState {
   nombre: string;
   handle: string;
   moneda: string;
-  metaContenido: number;
-  metaFechas: number;
+  metaContenido: number; // Meta semanal de videos grabados/editados
+  metaFechas: number; // Meta mensual de clientes / paquetes TikTok cerrados
 }
 
 export interface ContenidoState {
@@ -84,8 +86,17 @@ export interface ContenidoState {
   hechos: number;
 }
 
+export interface CloudSyncConfig {
+  supabaseUrl?: string;
+  supabaseAnonKey?: string;
+  supabaseTable?: string;
+  lastSyncedAt?: number;
+  autoSync?: boolean;
+}
+
 export interface DJState {
   perfil: PerfilState;
+  cloudSync?: CloudSyncConfig;
   fechas: FechaGig[];
   pagos: Pago[];
   pasos: ChecklistItem[];
@@ -101,3 +112,4 @@ export interface AiMessage {
   role: 'user' | 'bot';
   text: string;
 }
+

@@ -1,0 +1,30 @@
+{
+  "entities": {
+    "CRMState": {
+      "title": "CRMState",
+      "description": "IVA Creativa TikTok Agency CRM state with dates, clients, finance, and settings",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "agencyName": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "agencyName", "data"]
+    }
+  },
+  "firestore": {
+    "/crm_state/{stateId}": {
+      "schema": "CRMState",
+      "description": "Primary state document for IVA CREATIVA CRM"
+    }
+  }
+}

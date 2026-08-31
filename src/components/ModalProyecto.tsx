@@ -53,7 +53,7 @@ export const ModalProyecto: React.FC<ModalProyectoProps> = ({
     e.preventDefault();
     const n = nombre.trim();
     if (!n) {
-      onShowToast('El nombre del proyecto es obligatorio');
+      onShowToast('El nombre del paquete u oferta es obligatorio');
       return;
     }
 
@@ -70,7 +70,7 @@ export const ModalProyecto: React.FC<ModalProyectoProps> = ({
         ...prev,
         proyectos: (prev.proyectos || []).map((p) => (p.id === proy.id ? updated : p)),
       }));
-      onShowToast('Proyecto actualizado ✓');
+      onShowToast('Oferta / Paquete actualizado ✓');
     } else {
       const newProy: Proyecto = {
         id: uid(),
@@ -85,7 +85,7 @@ export const ModalProyecto: React.FC<ModalProyectoProps> = ({
         ...prev,
         proyectos: [...(prev.proyectos || []), newProy],
       }));
-      onShowToast('Nuevo proyecto guardado ✓');
+      onShowToast('Nueva oferta / paquete guardado ✓');
     }
 
     onClose();
@@ -93,7 +93,7 @@ export const ModalProyecto: React.FC<ModalProyectoProps> = ({
 
   const handleDelete = () => {
     if (!proy) return;
-    if (window.confirm('¿Borrar este proyecto?')) {
+    if (window.confirm('¿Borrar este proyecto / oferta?')) {
       onUpdateState((prev) => ({
         ...prev,
         proyectos: (prev.proyectos || []).filter((p) => p.id !== proy.id),
@@ -107,7 +107,7 @@ export const ModalProyecto: React.FC<ModalProyectoProps> = ({
     <div className="overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-head">
-          <h2>{isEditing ? 'Editar proyecto' : 'Nuevo proyecto / idea'}</h2>
+          <h2>{isEditing ? 'Editar Paquete / Oferta' : 'Nuevo Paquete / Formato de Video'}</h2>
           <button className="x" onClick={onClose}>
             ✕
           </button>
@@ -115,9 +115,9 @@ export const ModalProyecto: React.FC<ModalProyectoProps> = ({
 
         <form onSubmit={handleSubmit}>
           <div className="field">
-            <label>Nombre del proyecto</label>
+            <label>Nombre del Paquete o Servicio</label>
             <input
-              placeholder="Ej: Fiesta propia mensual, Vender pack de samples..."
+              placeholder="Ej: Pack Retainer 16 TikToks + TikTok Ads, Red de Creadores UGC..."
               required
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
@@ -125,9 +125,9 @@ export const ModalProyecto: React.FC<ModalProyectoProps> = ({
           </div>
 
           <div className="field">
-            <label>Descripción / Objetivo</label>
+            <label>Descripción / Estructura Comercial</label>
             <textarea
-              placeholder="De qué se trata, cómo monetiza, qué necesitás para arrancarlo..."
+              placeholder="¿Qué incluye? (guiones, días de rodaje, edición CapCut, entregables, precio sugerido en Soles)..."
               value={desc}
               onChange={(e) => setDesc(e.target.value)}
             />
@@ -149,15 +149,15 @@ export const ModalProyecto: React.FC<ModalProyectoProps> = ({
                   )
                 }
               >
-                <option value="idea">Idea en mente</option>
-                <option value="probando">Probando / Test</option>
-                <option value="activo">Activo y funcionando</option>
+                <option value="idea">Idea en diseño</option>
+                <option value="probando">En prueba con clientes piloto</option>
+                <option value="activo">Paquete activo en catálogo</option>
                 <option value="pausado">Pausado</option>
                 <option value="descartado">Descartado</option>
               </select>
             </div>
             <div className="field">
-              <label>Prioridad</label>
+              <label>Prioridad Comercial</label>
               <select
                 value={prio}
                 onChange={(e) =>
@@ -172,9 +172,9 @@ export const ModalProyecto: React.FC<ModalProyectoProps> = ({
           </div>
 
           <div className="field">
-            <label>Próximo paso concreto</label>
+            <label>Próximo paso de lanzamiento</label>
             <input
-              placeholder="Qué es lo primero que tenés que hacer hoy..."
+              placeholder="Ej: Armar dossier comercial PDF y enviar a 10 restaurantes de Miraflores..."
               value={paso}
               onChange={(e) => setPaso(e.target.value)}
             />
@@ -198,7 +198,7 @@ export const ModalProyecto: React.FC<ModalProyectoProps> = ({
             >
               Cancelar
             </button>
-            <button type="submit" className="btn sm">
+            <button type="submit" className="btn sm bg-[#ef4444] text-white">
               Guardar
             </button>
           </div>

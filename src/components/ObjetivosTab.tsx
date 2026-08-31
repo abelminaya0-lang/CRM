@@ -104,11 +104,11 @@ export const ObjetivosTab: React.FC<ObjetivosTabProps> = ({
   return (
     <section className="screen active" id="tab-objetivos">
       <div className="grid-2" style={{ marginBottom: '14px' }}>
-        {/* Contenido de la semana */}
+        {/* Videos TikTok de la semana */}
         <div className="goal-card" id="goalContenido">
-          <h3>Contenido de la semana</h3>
+          <h3>Videos TikTok Producidos (Semana)</h3>
           <div className="g-sub">
-            Piezas que subiste esta semana. Se reinicia solo cada lunes.
+            Videos grabados, editados o entregados esta semana en la agencia.
           </div>
           <div className="counter">
             <button id="cMinus" onClick={handleMinusContenido}>
@@ -126,17 +126,16 @@ export const ObjetivosTab: React.FC<ObjetivosTabProps> = ({
             <i style={{ width: `${pctC}%` }}></i>
           </div>
           <div className="prog-lab">
-            <span>{doneC ? '¡Meta cumplida! 🔥' : `Vas ${pctC}%`}</span>
-            <span>Meta: {metaC || '—'}/semana</span>
+            <span>{doneC ? '¡Meta semanal superada! 🚀' : `Avance: ${pctC}%`}</span>
+            <span>Meta: {metaC || '—'} videos/sem</span>
           </div>
         </div>
 
-        {/* Fechas del mes */}
+        {/* Clientes / Paquetes del mes */}
         <div className="goal-card" id="goalFechas">
-          <h3>Fechas del mes</h3>
+          <h3>Paquetes / Clientes Activos (Mes)</h3>
           <div className="g-sub">
-            Fechas cerradas en {MESES_LARGO[now.getMonth()]}. Se cuenta solo
-            automáticamente.
+            Rodajes agendados, confirmados y cobrados en {MESES_LARGO[now.getMonth()]}.
           </div>
           <div className="counter">
             <div className="cnum" style={{ fontSize: '48px' }}>
@@ -148,23 +147,23 @@ export const ObjetivosTab: React.FC<ObjetivosTabProps> = ({
             <i style={{ width: `${pctF}%` }}></i>
           </div>
           <div className="prog-lab">
-            <span>{doneF ? '¡Mes cumplido! 🎯' : `Vas ${pctF}%`}</span>
-            <span>Faltan {Math.max(0, metaF - mesGan)}</span>
+            <span>{doneF ? '¡Meta mensual lograda! 🎯' : `Avance: ${pctF}%`}</span>
+            <span>Faltan {Math.max(0, metaF - mesGan)} para la meta</span>
           </div>
         </div>
       </div>
 
       <div className="grid-2">
-        {/* Próximos pasos */}
+        {/* Checklist de Producción */}
         <div className="card">
           <span className="eyebrow" style={{ marginBottom: '14px' }}>
-            Próximos pasos
+            Checklist de Producción & Rodajes
           </span>
           <ul className="checklist" id="pasos">
             {state.pasos.length === 0 ? (
               <li className="check-item" style={{ opacity: 0.6 }}>
                 <span className="ci-text">
-                  Todavía no agregaste nada. Escribí abajo y sumá tu primer ítem.
+                  No hay tareas pendientes. Agrega la primera abajo.
                 </span>
               </li>
             ) : (
@@ -193,8 +192,8 @@ export const ObjetivosTab: React.FC<ObjetivosTabProps> = ({
           <div className="add-inline">
             <input
               id="pasoInput"
-              placeholder="Ej: cerrar 2 boliches nuevos esta semana"
-              maxLength={120}
+              placeholder="Ej: Preparar escaleta de tomas para nuevo restaurante..."
+              maxLength={140}
               value={pasoInput}
               onChange={(e) => setPasoInput(e.target.value)}
               onKeyDown={(e) => {
@@ -207,16 +206,16 @@ export const ObjetivosTab: React.FC<ObjetivosTabProps> = ({
           </div>
         </div>
 
-        {/* Objetivos a lograr */}
+        {/* Objetivos Comerciales de la Agencia */}
         <div className="card">
           <span className="eyebrow" style={{ marginBottom: '14px' }}>
-            Objetivos a lograr
+            Objetivos de Crecimiento & Marca
           </span>
           <ul className="checklist" id="objetivos">
             {state.objetivos.length === 0 ? (
               <li className="check-item" style={{ opacity: 0.6 }}>
                 <span className="ci-text">
-                  Todavía no agregaste nada. Escribí abajo y sumá tu primer ítem.
+                  No hay objetivos registrados. Escribe abajo y suma tu meta.
                 </span>
               </li>
             ) : (
@@ -245,8 +244,8 @@ export const ObjetivosTab: React.FC<ObjetivosTabProps> = ({
           <div className="add-inline">
             <input
               id="objInput"
-              placeholder="Ej: tocar en un festival grande"
-              maxLength={120}
+              placeholder="Ej: Lograr 10 clientes con contrato fijo de 12 videos..."
+              maxLength={140}
               value={objInput}
               onChange={(e) => setObjInput(e.target.value)}
               onKeyDown={(e) => {

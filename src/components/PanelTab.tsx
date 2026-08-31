@@ -65,48 +65,48 @@ export const PanelTab: React.FC<PanelTabProps> = ({
         <div className="kpi">
           <span className="k-label">Facturado este mes</span>
           <div className="k-val high">{money(factMes, currency)}</div>
-          <div className="k-foot">{MESES_LARGO[now.getMonth()]}</div>
+          <div className="k-foot">{MESES_LARGO[now.getMonth()]} · Ingresos reales</div>
         </div>
         <div className="kpi">
-          <span className="k-label">Próximas fechas</span>
+          <span className="k-label">Próximos Rodajes</span>
           <div className="k-val accent">{futuras.length}</div>
           <div className="k-foot">
-            {futuras.length ? 'confirmadas y a confirmar' : 'cargá una nueva'}
+            {futuras.length ? 'grabaciones programadas' : 'agenda un nuevo cliente'}
           </div>
         </div>
         <div className="kpi">
           <span className="k-label">Por cobrar</span>
           <div className="k-val">{money(porCobrar, currency)}</div>
-          <div className="k-foot">saldos pendientes</div>
+          <div className="k-foot">saldos tras entregas</div>
         </div>
         <div className="kpi">
           <span className="k-label">Ticket promedio</span>
           <div className="k-val">{money(prom, currency)}</div>
-          <div className="k-foot">sobre fechas cerradas</div>
+          <div className="k-foot">por paquete de videos</div>
         </div>
       </div>
 
       <div className="grid-2">
-        {/* Próximas fechas */}
+        {/* Próximos Rodajes y Clientes */}
         <div className="card">
           <div className="row-head">
             <span className="eyebrow" style={{ margin: 0 }}>
-              Próximas fechas
+              Próximos Rodajes & Grabaciones
             </span>
             <button
               className="btn ghost sm"
               onClick={() => onGotoTab('fechas')}
             >
-              Ver todas
+              Ver Pipeline
             </button>
           </div>
           <div id="proximas">
             {sortedFuturas.length === 0 ? (
               <div className="empty" style={{ padding: '26px 12px' }}>
-                <div className="e-emoji">🎧</div>
-                <p>No tenés fechas próximas cargadas.</p>
+                <div className="e-emoji">🎬</div>
+                <p>No tienes rodajes próximos agendados.</p>
                 <button className="btn sm" onClick={onOpenNuevaFecha}>
-                  Cargar fecha
+                  ＋ Agendar Rodaje / Cliente
                 </button>
               </div>
             ) : (
@@ -121,7 +121,7 @@ export const PanelTab: React.FC<PanelTabProps> = ({
                         <small>{d ? MESES[d.getMonth()] : ''}</small>
                       </div>
                       <div className="u-body">
-                        <b>{f.lugar || 'Sin nombre'}</b>
+                        <b>{f.lugar || 'Cliente sin nombre'}</b>
                         <span>
                           {f.horario ? `${f.horario} · ` : ''}
                           <span
@@ -147,15 +147,15 @@ export const PanelTab: React.FC<PanelTabProps> = ({
           </div>
         </div>
 
-        {/* Objetivos de la semana */}
+        {/* Objetivos de la Agencia */}
         <div className="card">
           <span className="eyebrow" style={{ marginBottom: '14px' }}>
-            Objetivos de la semana
+            Objetivos de Producción TikTok
           </span>
           <div id="panelObjetivos">
             <div style={{ marginBottom: '16px' }}>
               <div className="prog-lab" style={{ margin: '0 0 7px' }}>
-                <span>Contenido esta semana</span>
+                <span>Videos TikTok editados esta semana</span>
                 <b style={{ color: 'var(--ink)' }}>
                   {c.hechos} / {metaC || '—'}
                 </b>
@@ -167,7 +167,7 @@ export const PanelTab: React.FC<PanelTabProps> = ({
 
             <div style={{ marginBottom: '16px' }}>
               <div className="prog-lab" style={{ margin: '0 0 7px' }}>
-                <span>Fechas cerradas este mes</span>
+                <span>Paquetes / Clientes cerrados este mes</span>
                 <b style={{ color: 'var(--ink)' }}>
                   {mesGan} / {metaF || '—'}
                 </b>
@@ -182,7 +182,7 @@ export const PanelTab: React.FC<PanelTabProps> = ({
               style={{ marginTop: '6px' }}
               onClick={() => onGotoTab('objetivos')}
             >
-              Ver objetivos y próximos pasos
+              Ver Objetivos & Checklist de Producción
             </button>
           </div>
         </div>

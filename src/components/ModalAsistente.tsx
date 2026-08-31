@@ -21,7 +21,7 @@ export const ModalAsistente: React.FC<ModalAsistenteProps> = ({
   const [messages, setMessages] = useState<AiMessage[]>([
     {
       role: 'bot',
-      text: '¡Hola! Soy tu asistente de secretaría y management. Puedo ayudarte a redactar respuestas a clientes, armar seguimientos de fechas pendientes, organizar tu semana o darte ideas de contenido.',
+      text: '¡Hola! Soy el Asistente Estratégico de IVA CREATIVA. Te ayudo a escribir guiones con ganchos (hooks) virales para TikTok, redactar propuestas comerciales para negocios por WhatsApp, hacer seguimiento de rodajes y calcular presupuestos.',
     },
   ]);
   const [inputVal, setInputVal] = useState('');
@@ -43,8 +43,8 @@ export const ModalAsistente: React.FC<ModalAsistenteProps> = ({
   if (!isOpen) return null;
 
   const buildSystemPrompt = () => {
-    const djName = state.perfil.nombre || 'DJ';
-    const currency = state.perfil.moneda || '$';
+    const agencyName = state.perfil.nombre || 'IVA CREATIVA';
+    const currency = state.perfil.moneda || 'S/';
     const todayStr = todayISO();
     const mk = todayStr.slice(0, 7);
 
@@ -61,31 +61,34 @@ export const ModalAsistente: React.FC<ModalAsistenteProps> = ({
       .slice(0, 10)
       .map(
         (f) =>
-          `- ${f.fecha || 's/f'}: ${f.lugar} (${f.estado}, ticket: ${money(
+          `- ${f.fecha || 's/f'}: ${f.lugar} (${f.estado}, paquete: ${money(
             f.ticket,
             currency
           )}, contacto: ${f.contacto || 'n/a'})`
       )
       .join('\n');
 
-    return `Eres la asistente y manager comercial del DJ ${djName} (Perú / Latinoamérica).
-Tu tono es profesional, ágil, resolutivo y directo.
-Utilizas terminología de la industria de eventos y vida nocturna cuando corresponde (adelanto/seña, fecha, club, discoteca, corporativo, ticket/tarifa, set, cabina, Yape/Plin/transferencia), con excelente trato comercial.
+    return `Eres el Director Creativo y Asistente Comercial de "${agencyName}", una agencia especializada en producción de contenido de videos de TikTok y Reels para negocios y marcas (Perú / Latinoamérica).
+Tu tono es moderno, estratégico, persuasivo, orientado a ventas y retención viral en TikTok.
+Utilizas terminología de producción y marketing digital (Hooks/Ganchos de 3s, Retención, Escaleta, B-Roll, UGC, Llamado a la Acción / CTA, Paquete de 8/12/16 videos, Rodaje Full Day, Adelanto 50%, Yape/Plin/Transferencia BCP).
 
-Contexto actual del DJ:
-- Nombre: ${djName}
+Contexto actual de la agencia:
+- Marca: ${agencyName}
 - Moneda: ${currency}
 - Facturado este mes: ${money(factMes, currency)}
-- Fechas confirmadas/reservadas próximas: ${ganadas.length}
-- Consultas abiertas pendientes de cierre: ${consultas.length}
+- Rodajes activos agendados/confirmados: ${ganadas.length}
+- Negocios en prospección/consulta: ${consultas.length}
 
-Últimas fechas registradas:
-${fechasContext || '(sin fechas aún)'}
+Clientes y rodajes recientes:
+${fechasContext || '(sin clientes aún)'}
 
 Instrucciones:
-1. Si te piden redactar un mensaje para un cliente o local, entrega el texto listo para copiar y enviar por WhatsApp.
-2. Si te piden consejos de seguimiento o cobro, indícales exactamente a quién escribirle y qué mensaje enviar.
-3. Responde con respuestas concisas, estructuradas y fáciles de leer.`;
+1. Si te piden un GUION para un nicho (ej: restaurante, odontología, ropa, gimnasio), estructura el guion con:
+   - Gancho (0 a 3s) visual y verbal de alta curiosidad o solución a un problema.
+   - Desarrollo rápido (3 a 25s) con tomas sugeridas (B-Roll).
+   - Llamado a la acción (CTA) claro a WhatsApp o perfil.
+2. Si te piden un MENSAJE COMERCIAL para WhatsApp, redacta un texto profesional, cálido y persuasivo listo para copiar y enviar.
+3. Brinda respuestas claras, estructuradas y directamente aplicables al negocio.`;
   };
 
   const handleSendMessage = async (textToSend?: string) => {
@@ -171,7 +174,7 @@ Instrucciones:
     const newGig: FechaGig = {
       id: uid(),
       creado: Date.now(),
-      lugar: parsedData.lugar || 'Evento',
+      lugar: parsedData.lugar || 'Cliente / Negocio',
       fecha: parsedData.fecha || todayISO(),
       horario: parsedData.horario || '',
       contacto: parsedData.contacto || '',
@@ -186,7 +189,7 @@ Instrucciones:
       fechas: [newGig, ...prev.fechas],
     }));
 
-    onShowToast('Fecha creada desde chat ✓');
+    onShowToast('Cliente agendado desde WhatsApp ✓');
     setParsedData(null);
     setParseText('');
     onClose();
@@ -197,10 +200,10 @@ Instrucciones:
       <div
         className="modal modal-ai"
         onClick={(e) => e.stopPropagation()}
-        style={{ width: '100%', maxWidth: '560px' }}
+        style={{ width: '100%', maxWidth: '580px' }}
       >
         <div className="modal-head">
-          <h2>Secretaría & Asistente IA</h2>
+          <h2>IA Guiones, Ventas & Rodajes</h2>
           <button className="x" onClick={onClose}>
             ✕
           </button>
@@ -212,14 +215,14 @@ Instrucciones:
             className={`ai-tab ${subTab === 'chat' ? 'active' : ''}`}
             onClick={() => setSubTab('chat')}
           >
-            Secretaría (Chat)
+            Director IA (Guiones & Ventas)
           </button>
           <button
             type="button"
             className={`ai-tab ${subTab === 'parse' ? 'active' : ''}`}
             onClick={() => setSubTab('parse')}
           >
-            Pegar chat ➔ Crear fecha
+            Pegar WhatsApp ➔ Agendar Cliente
           </button>
         </div>
 
@@ -229,34 +232,34 @@ Instrucciones:
               <button
                 type="button"
                 onClick={() =>
-                  handleSendMessage('Redactar respuesta para pasar presupuesto a un cliente que consulta por un cumple de 15')
+                  handleSendMessage('Escribe 3 guiones de 30s con hooks virales para un restaurante de carnes y parrillas que quiere más comensales los fines de semana')
                 }
               >
-                💬 Redactar presupuesto
+                🎬 Guiones con Hook Viral
               </button>
               <button
                 type="button"
                 onClick={() =>
-                  handleSendMessage('¿A quién le hago seguimiento hoy según mis fechas abiertas?')
+                  handleSendMessage('Redacta un mensaje de WhatsApp para enviar propuesta formal de Pack de 12 Videos TikTok (S/ 2,400) a un cliente de una clínica dental')
                 }
               >
-                🎯 Seguimiento hoy
+                💼 Propuesta Pack TikTok
               </button>
               <button
                 type="button"
                 onClick={() =>
-                  handleSendMessage('Organizá mi semana de DJ comercial y fechas')
+                  handleSendMessage('¿A qué clientes en estado consulta o con saldo pendiente debo hacerles seguimiento comercial hoy?')
                 }
               >
-                📅 Plan de la semana
+                🎯 Seguimiento de Cierres
               </button>
               <button
                 type="button"
                 onClick={() =>
-                  handleSendMessage('5 ideas de reels o contenido para esta semana')
+                  handleSendMessage('Dame 5 ideas de formatos de video virales para negocios locales que generan alta retención en TikTok')
                 }
               >
-                💡 5 ideas de contenido
+                💡 5 Formatos Virales
               </button>
             </div>
 
@@ -276,7 +279,7 @@ Instrucciones:
                 </div>
               ))}
               {loading && (
-                <div className="ai-typing">Secretaría escribiendo...</div>
+                <div className="ai-typing">IVA CREATIVA IA generando respuesta...</div>
               )}
               <div ref={threadEndRef} />
             </div>
@@ -284,7 +287,7 @@ Instrucciones:
             <div className="ai-input">
               <textarea
                 rows={2}
-                placeholder="Escribile a tu secretaría... (ej: 'redactá un recordatorio de saldo para el cliente')"
+                placeholder="Pide guiones, hooks de video, mensajes de cobro o propuestas comerciales..."
                 value={inputVal}
                 onChange={(e) => setInputVal(e.target.value)}
                 onKeyDown={(e) => {
@@ -295,7 +298,7 @@ Instrucciones:
                 }}
               />
               <button
-                className="btn sm"
+                className="btn sm bg-[#ef4444] text-white"
                 disabled={loading}
                 onClick={() => handleSendMessage()}
               >
@@ -306,21 +309,21 @@ Instrucciones:
         ) : (
           <div>
             <div className="field">
-              <label>Pegá acá la conversación de WhatsApp con el cliente o boliche</label>
+              <label>Pega aquí la conversación o mensaje del cliente de WhatsApp</label>
               <textarea
                 rows={6}
-                placeholder={`Ejemplo:\n"Hola crack, te hablo de Club Velvet. Queremos ver si tenés libre el sábado 24 de agosto de 02:00 a 05:30. Tenemos un presupuesto de 200k. Avisame si te sirve."`}
+                placeholder={`Ejemplo:\n"Hola IVA Creativa, somos del Restaurante El Carbón en Miraflores. Queremos cotizar un paquete de 12 TikToks para este mes. Podríamos grabar el jueves 15 de 10am a 2pm. Nuestro presupuesto es aprox S/ 2,400. Contáctame por aquí, soy Carlos 987654321"`}
                 value={parseText}
                 onChange={(e) => setParseText(e.target.value)}
               />
             </div>
             <button
-              className="btn block"
+              className="btn block bg-[#ef4444] text-white"
               disabled={parsing || !parseText.trim()}
               onClick={handleParseChat}
               style={{ marginBottom: '14px' }}
             >
-              {parsing ? 'Interpretando con IA...' : '✨ Interpretar datos de la fecha'}
+              {parsing ? 'Interpretando con IA...' : '✨ Extraer datos del cliente & rodaje'}
             </button>
 
             {parsedData && (
@@ -333,22 +336,22 @@ Instrucciones:
                 }}
               >
                 <span className="eyebrow" style={{ marginBottom: '8px' }}>
-                  Datos detectados:
+                  Datos detectados del cliente:
                 </span>
                 <div style={{ fontSize: '14px', lineHeight: 1.6 }}>
-                  <div><b>Lugar:</b> {parsedData.lugar || '—'}</div>
-                  <div><b>Fecha:</b> {parsedData.fecha || '—'}</div>
+                  <div><b>Cliente / Negocio:</b> {parsedData.lugar || '—'}</div>
+                  <div><b>Fecha de Rodaje:</b> {parsedData.fecha || '—'}</div>
                   <div><b>Horario:</b> {parsedData.horario || '—'}</div>
                   <div><b>Contacto:</b> {parsedData.contacto || '—'}</div>
-                  <div><b>Ticket:</b> ${parsedData.ticket?.toLocaleString('es-AR') || '0'}</div>
-                  {parsedData.notas && <div><b>Notas:</b> {parsedData.notas}</div>}
+                  <div><b>Presupuesto / Tarifa:</b> S/ {parsedData.ticket?.toLocaleString('es-PE') || '0'}</div>
+                  {parsedData.notas && <div><b>Notas del paquete:</b> {parsedData.notas}</div>}
                 </div>
                 <button
-                  className="btn block sm"
+                  className="btn block sm bg-[#ef4444] text-white"
                   style={{ marginTop: '12px' }}
                   onClick={handleSaveParsedDate}
                 >
-                  ＋ Guardar esta fecha en el CRM
+                  ＋ Guardar este cliente en el Pipeline
                 </button>
               </div>
             )}

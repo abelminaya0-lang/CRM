@@ -61,22 +61,22 @@ export const StatsTab: React.FC<StatsTabProps> = ({ state }) => {
         <div className="kpi">
           <span className="k-label">Facturado total</span>
           <div className="k-val high">{money(totalFact, currency)}</div>
-          <div className="k-foot">todos los pagos cargados</div>
+          <div className="k-foot">ingresos cobrados en la agencia</div>
         </div>
         <div className="kpi">
-          <span className="k-label">Fechas cerradas</span>
+          <span className="k-label">Paquetes / Clientes cerrados</span>
           <div className="k-val accent">{ganadas.length}</div>
-          <div className="k-foot">reservadas + confirmadas + cobradas</div>
+          <div className="k-foot">rodajes agendados + entregados</div>
         </div>
         <div className="kpi">
           <span className="k-label">Ticket promedio</span>
           <div className="k-val">{money(prom, currency)}</div>
-          <div className="k-foot">por fecha cerrada</div>
+          <div className="k-foot">por paquete de TikToks</div>
         </div>
         <div className="kpi">
           <span className="k-label">Por cobrar</span>
           <div className="k-val">{money(porCobrar, currency)}</div>
-          <div className="k-foot">saldos pendientes</div>
+          <div className="k-foot">saldos pendientes de liquidación</div>
         </div>
       </div>
 
@@ -84,7 +84,7 @@ export const StatsTab: React.FC<StatsTabProps> = ({ state }) => {
         {/* Billing chart */}
         <div className="card">
           <span className="eyebrow" style={{ marginBottom: '8px' }}>
-            Facturación por mes
+            Facturación Mensual de la Agencia
           </span>
           <div className="bars-chart" id="chart">
             {buckets.map((b) => {
@@ -106,7 +106,7 @@ export const StatsTab: React.FC<StatsTabProps> = ({ state }) => {
         {/* Close rate ring */}
         <div className="card">
           <span className="eyebrow" style={{ marginBottom: '16px' }}>
-            Tasa de cierre
+            Tasa de Cierre Comercial
           </span>
           <div className="close-ring">
             <div
@@ -125,15 +125,15 @@ export const StatsTab: React.FC<StatsTabProps> = ({ state }) => {
             </div>
             <div style={{ flex: 1 }}>
               <div className="stat-line">
-                <span className="sl-lab">Fechas cerradas</span>
+                <span className="sl-lab">Paquetes ganados</span>
                 <span className="sl-val">{ganadas.length}</span>
               </div>
               <div className="stat-line">
-                <span className="sl-lab">Perdidas / no cerró</span>
+                <span className="sl-lab">No cerrados / perdidos</span>
                 <span className="sl-val">{perdidas.length}</span>
               </div>
               <div className="stat-line">
-                <span className="sl-lab">Consultas abiertas</span>
+                <span className="sl-lab">Leads en consulta</span>
                 <span className="sl-val">{consultasAbiertas}</span>
               </div>
             </div>
@@ -144,15 +144,15 @@ export const StatsTab: React.FC<StatsTabProps> = ({ state }) => {
       {/* Business summary */}
       <div className="card">
         <span className="eyebrow" style={{ marginBottom: '8px' }}>
-          Resumen del negocio
+          Resumen de Producción & Pipeline
         </span>
         <div id="statResumen">
           <div className="stat-line">
-            <span className="sl-lab">Total de fechas cargadas</span>
+            <span className="sl-lab">Total de rodajes/clientes registrados</span>
             <span className="sl-val">{state.fechas.length}</span>
           </div>
           <div className="stat-line">
-            <span className="sl-lab">Próximas (de hoy en adelante)</span>
+            <span className="sl-lab">Rodajes futuros agendados</span>
             <span className="sl-val">{futuras}</span>
           </div>
           {ORDEN.map((est) => {

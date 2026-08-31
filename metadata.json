@@ -1,6 +1,6 @@
 {
-  "name": "EL COYOTE SHOW",
-  "description": "EL COYOTE SHOW — CRM integral de gestión de fechas, calendario, estadísticas, objetivos, pagos, finanzas, notas y asistente.",
+  "name": "IVA CREATIVA",
+  "description": "IVA CREATIVA — CRM integral para Agencia de Contenido de Videos de TikTok para Negocios. Gestión de rodajes, pipeline de clientes, calendario, producción, finanzas en Soles (S/) y asistente con IA.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

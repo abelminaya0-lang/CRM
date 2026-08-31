@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { DJState, EstadoFecha, FechaGig, Pago } from '../types';
 import { ESTADOS, ORDEN, todayISO, uid } from '../utils/crmData';
+import {
+  createOrUpdateGoogleCalendarEvent,
+  deleteGoogleCalendarEvent,
+  getCachedGoogleToken,
+  requestGoogleCalendarAuth,
+} from '../utils/googleCalendar';
 
 interface ModalFechaProps {
   isOpen: boolean;
@@ -33,6 +39,8 @@ export const ModalFecha: React.FC<ModalFechaProps> = ({
   const [sena, setSena] = useState('');
   const [estado, setEstado] = useState<EstadoFecha>('consulta');
   const [notas, setNotas] = useState('');
+  const [syncGcal, setSyncGcal] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -59,19 +67,22 @@ export const ModalFecha: React.FC<ModalFechaProps> = ({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const l = lugar.trim();
     if (!l) {
-      onShowToast('El nombre del lugar es obligatorio');
+      onShowToast('El nombre del cliente o negocio es obligatorio');
       return;
     }
 
+    setIsSaving(true);
     const t = +ticket || 0;
     const s = +sena || 0;
 
+    let targetGig: FechaGig;
+
     if (isEditing && gig) {
-      const updated: FechaGig = {
+      targetGig = {
         ...gig,
         lugar: l,
         fecha: fecha || '',
@@ -82,16 +93,9 @@ export const ModalFecha: React.FC<ModalFechaProps> = ({
         estado,
         notas: notas.trim(),
       };
-
-      onUpdateState((prev) => ({
-        ...prev,
-        fechas: prev.fechas.map((f) => (f.id === gig.id ? updated : f)),
-      }));
-      onShowToast('Fecha actualizada ✓');
     } else {
-      const newId = uid();
-      const newGig: FechaGig = {
-        id: newId,
+      targetGig = {
+        id: uid(),
         creado: Date.now(),
         lugar: l,
         fecha: fecha || '',
@@ -102,49 +106,97 @@ export const ModalFecha: React.FC<ModalFechaProps> = ({
         estado,
         notas: notas.trim(),
       };
+    }
 
-      // If user entered a down payment (seña > 0), automatically register it as a payment
+    // Try Google Calendar sync if selected and confirmed/reserved
+    if (syncGcal && targetGig.fecha && targetGig.estado !== 'caida') {
+      let token = getCachedGoogleToken();
+      if (token) {
+        try {
+          const gcalRes = await createOrUpdateGoogleCalendarEvent(token, targetGig, currency);
+          if (gcalRes.success && gcalRes.eventId) {
+            targetGig.googleEventId = gcalRes.eventId;
+            targetGig.googleCalendarSynced = true;
+          }
+        } catch (e) {
+          console.warn('Silent gcal sync fail on save:', e);
+        }
+      }
+    }
+
+    if (isEditing && gig) {
+      onUpdateState((prev) => ({
+        ...prev,
+        fechas: prev.fechas.map((f) => (f.id === gig.id ? targetGig : f)),
+      }));
+      onShowToast(
+        targetGig.googleCalendarSynced
+          ? 'Rodaje actualizado y sincronizado en Google Calendar ✓'
+          : 'Cliente / Rodaje actualizado ✓'
+      );
+    } else {
       let extraPago: Pago | null = null;
       if (s > 0) {
         extraPago = {
           id: uid(),
-          fechaId: newId,
+          fechaId: targetGig.id,
           monto: s,
           fecha: fecha || todayISO(),
-          concepto: 'Seña',
-          metodo: 'Transferencia',
+          concepto: 'Adelanto 50%',
+          metodo: 'Transferencia BCP',
           creado: Date.now(),
         };
       }
 
       onUpdateState((prev) => ({
         ...prev,
-        fechas: [newGig, ...prev.fechas],
+        fechas: [targetGig, ...prev.fechas],
         pagos: extraPago ? [extraPago, ...prev.pagos] : prev.pagos,
       }));
-      onShowToast('Nueva fecha guardada ✓');
+      onShowToast(
+        targetGig.googleCalendarSynced
+          ? 'Rodaje agendado y sincronizado en Google Calendar ✓'
+          : 'Nuevo rodaje / cliente agendado ✓'
+      );
     }
 
+    setIsSaving(false);
     onClose();
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!gig) return;
-    if (window.confirm('¿Borrar esta fecha?')) {
+    if (window.confirm('¿Borrar este cliente / rodaje?')) {
+      const token = getCachedGoogleToken();
+      if (token && gig.googleEventId) {
+        deleteGoogleCalendarEvent(token, gig.googleEventId).catch(() => {});
+      }
+
       onUpdateState((prev) => ({
         ...prev,
         fechas: prev.fechas.filter((f) => f.id !== gig.id),
       }));
-      onShowToast('Fecha eliminada');
+      onShowToast('Registro eliminado');
       onClose();
     }
   };
+
+  const handleAuthorizeGoogleCalendar = async () => {
+    const res = await requestGoogleCalendarAuth();
+    if (res.success) {
+      onShowToast('Google Calendar conectado ✓');
+    } else {
+      alert(res.error || 'No se pudo conectar');
+    }
+  };
+
+  const hasGcalToken = Boolean(getCachedGoogleToken());
 
   return (
     <div className="overlay" id="overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-head">
-          <h2 id="modalTitle">{isEditing ? 'Editar fecha' : 'Nueva fecha'}</h2>
+          <h2 id="modalTitle">{isEditing ? 'Editar Rodaje / Cliente' : 'Nuevo Rodaje / Cliente TikTok'}</h2>
           <button className="x" id="modalClose" onClick={onClose}>
             ✕
           </button>
@@ -152,10 +204,10 @@ export const ModalFecha: React.FC<ModalFechaProps> = ({
 
         <form id="fFecha" onSubmit={handleSubmit}>
           <div className="field">
-            <label>Lugar / Evento</label>
+            <label>Cliente / Negocio & Locación</label>
             <input
               id="fLugar"
-              placeholder="Ej: Club Mandarine, Cumple 15, Boliche Terrazas"
+              placeholder="Ej: Restaurante La Parrilla (Miraflores), Clínica Dental..."
               required
               value={lugar}
               onChange={(e) => setLugar(e.target.value)}
@@ -164,7 +216,7 @@ export const ModalFecha: React.FC<ModalFechaProps> = ({
 
           <div className="field-row">
             <div className="field">
-              <label>Fecha</label>
+              <label>Fecha de Grabación / Rodaje</label>
               <input
                 id="fFechaD"
                 type="date"
@@ -174,10 +226,10 @@ export const ModalFecha: React.FC<ModalFechaProps> = ({
               />
             </div>
             <div className="field">
-              <label>Horario</label>
+              <label>Horario de Rodaje</label>
               <input
                 id="fHorario"
-                placeholder="Ej: 01:00 a 05:00"
+                placeholder="Ej: 10:00 a 14:00 (4 horas)"
                 value={horario}
                 onChange={(e) => setHorario(e.target.value)}
               />
@@ -185,10 +237,10 @@ export const ModalFecha: React.FC<ModalFechaProps> = ({
           </div>
 
           <div className="field">
-            <label>Contacto / Cliente</label>
+            <label>Contacto / WhatsApp del Negocio</label>
             <input
               id="fContacto"
-              placeholder="Nombre, teléfono o usuario de IG"
+              placeholder="Ej: Martín (Gerente) · 987 654 321"
               value={contacto}
               onChange={(e) => setContacto(e.target.value)}
             />
@@ -196,25 +248,25 @@ export const ModalFecha: React.FC<ModalFechaProps> = ({
 
           <div className="field-row">
             <div className="field">
-              <label>Ticket / Tarifa acordada ({currency})</label>
+              <label>Tarifa del Paquete ({currency})</label>
               <input
                 id="fTicket"
                 type="number"
                 min="0"
                 step="any"
-                placeholder="0"
+                placeholder="Ej: 2400"
                 value={ticket}
                 onChange={(e) => setTicket(e.target.value)}
               />
             </div>
             <div className="field">
-              <label>Adelanto / Seña ({currency})</label>
+              <label>Adelanto 50% ({currency})</label>
               <input
                 id="fSena"
                 type="number"
                 min="0"
                 step="any"
-                placeholder="0"
+                placeholder="Ej: 1200"
                 value={sena}
                 onChange={(e) => setSena(e.target.value)}
               />
@@ -222,7 +274,7 @@ export const ModalFecha: React.FC<ModalFechaProps> = ({
           </div>
 
           <div className="field">
-            <label>Estado</label>
+            <label>Estado en el Pipeline</label>
             <div className="estado-chips" id="chipsEstado">
               {ORDEN.map((est) => (
                 <button
@@ -247,13 +299,44 @@ export const ModalFecha: React.FC<ModalFechaProps> = ({
           </div>
 
           <div className="field">
-            <label>Notas / Requerimientos</label>
+            <label>Guion, Paquete de Videos & Requerimientos</label>
             <textarea
               id="fNotas"
-              placeholder="Equipamiento, traslados, pedidos de música..."
+              placeholder="Ej: Pack 12 TikToks. Grabar tomas de cocina, hook con el chef, testimonios de comensales. Llevar micro corbatero y luces LED..."
               value={notas}
               onChange={(e) => setNotas(e.target.value)}
             />
+          </div>
+
+          <div
+            style={{
+              padding: '10px 12px',
+              background: 'var(--panel-2)',
+              borderRadius: '9px',
+              border: '1px solid var(--line)',
+              marginBottom: '14px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <label style={{ margin: 0, fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={syncGcal}
+                onChange={(e) => setSyncGcal(e.target.checked)}
+              />
+              <span>📅 Sincronizar automáticamente en Google Calendar</span>
+            </label>
+            {!hasGcalToken && (
+              <button
+                type="button"
+                className="btn ghost sm text-xs"
+                onClick={handleAuthorizeGoogleCalendar}
+              >
+                Conectar Google
+              </button>
+            )}
           </div>
 
           <div className="modal-foot">
@@ -275,8 +358,8 @@ export const ModalFecha: React.FC<ModalFechaProps> = ({
             >
               Cancelar
             </button>
-            <button type="submit" className="btn sm">
-              Guardar
+            <button type="submit" className="btn sm bg-[#ef4444] text-white" disabled={isSaving}>
+              {isSaving ? 'Guardando...' : 'Guardar Rodaje'}
             </button>
           </div>
         </form>

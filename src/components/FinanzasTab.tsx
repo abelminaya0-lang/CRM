@@ -111,7 +111,7 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({
   // Income breakdown in selected month
   const ingresosByCat: Record<string, number> = {};
   if (facturadoMes > 0) {
-    ingresosByCat['Fechas DJ (CRM)'] = facturadoMes;
+    ingresosByCat['Paquetes TikTok (CRM)'] = facturadoMes;
   }
   allMovs
     .filter((m) => m.tipo === 'ingreso' && monthKey(m.fecha) === selMonthKey)
@@ -171,7 +171,7 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({
     e.preventDefault();
     const m = +movMonto;
     if (!m || m <= 0) {
-      onShowToast('Ingresá un monto válido');
+      onShowToast('Ingresa un monto válido');
       return;
     }
 
@@ -197,7 +197,7 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({
     setMovMonto('');
     setMovCat('');
     setMovConcepto('');
-    onShowToast(`${movTipo === 'gasto' ? 'Gasto' : 'Ingreso'} de ${money(m, currency)} guardado ✓`);
+    onShowToast(`${movTipo === 'gasto' ? 'Gasto' : 'Ingreso'} de ${money(m, currency)} registrado ✓`);
   };
 
   const handleDeleteMov = (id: string) => {
@@ -215,7 +215,7 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({
 
   const handleEditSaldoInicial = () => {
     const val = window.prompt(
-      'Ingresá tu saldo inicial de caja (en efectivo/bancos):',
+      'Ingresa el saldo inicial de caja de la agencia (en cuentas o efectivo):',
       String(saldoIni)
     );
     if (val !== null) {
@@ -236,31 +236,31 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({
       {/* 4 KPIs Generales */}
       <div className="kpis" id="finKpis">
         <div className="kpi">
-          <span className="k-label">Caja total</span>
+          <span className="k-label">Caja Total Agencia</span>
           <div className="k-val accent">{money(cajaTotal, currency)}</div>
-          <div className="k-foot">saldo acumulado</div>
+          <div className="k-foot">saldo disponible en cuentas</div>
         </div>
         <div className="kpi">
           <span className="k-label">Ingresos {selYear}</span>
           <div className="k-val high">{money(ingresosAnual, currency)}</div>
-          <div className="k-foot">facturado + extras</div>
+          <div className="k-foot">paquetes + servicios extra</div>
         </div>
         <div className="kpi">
           <span className="k-label">Gastos {selYear}</span>
           <div className="k-val" style={{ color: 'var(--low)' }}>
             {money(gastosAnual, currency)}
           </div>
-          <div className="k-foot">fijos + variables</div>
+          <div className="k-foot">operaciones, equipos y software</div>
         </div>
         <div className="kpi">
-          <span className="k-label">Flujo neto {selYear}</span>
+          <span className="k-label">Flujo Neto {selYear}</span>
           <div
             className="k-val"
             style={{ color: flujoNetoAnual >= 0 ? 'var(--high)' : 'var(--low)' }}
           >
             {money(flujoNetoAnual, currency)}
           </div>
-          <div className="k-foot">balance anual</div>
+          <div className="k-foot">utilidad neta acumulada</div>
         </div>
       </div>
 
@@ -288,15 +288,15 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({
 
         <div className="fin-month-kpis" id="finMonthKpis">
           <div className="fin-mk">
-            <span className="l">Ingresos</span>
+            <span className="l">Ingresos Totales</span>
             <div className="v in">{money(ingresosMes, currency)}</div>
           </div>
           <div className="fin-mk">
-            <span className="l">Gastos</span>
+            <span className="l">Gastos Operativos</span>
             <div className="v out">{money(gastosMes, currency)}</div>
           </div>
           <div className="fin-mk">
-            <span className="l">Flujo neto</span>
+            <span className="l">Utilidad Neta</span>
             <div
               className={`v ${flujoNetoMes >= 0 ? 'net' : 'out'}`}
             >
@@ -304,7 +304,7 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({
             </div>
           </div>
           <div className="fin-mk">
-            <span className="l">Facturado DJ</span>
+            <span className="l">Paquetes TikTok</span>
             <div className="v in">{money(facturadoMes, currency)}</div>
           </div>
         </div>
@@ -316,7 +316,7 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({
         <div className="card">
           <div className="row-head" style={{ marginBottom: '10px' }}>
             <span className="eyebrow" style={{ margin: 0 }}>
-              Gastos del mes
+              Desglose de Gastos del Mes
             </span>
             <div className="seg">
               <button
@@ -338,14 +338,14 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({
                 className={`seg-b ${gastoFilter === 'variable' ? 'active' : ''}`}
                 onClick={() => setGastoFilter('variable')}
               >
-                Var
+                Variables
               </button>
             </div>
           </div>
 
           <div id="breakGastos">
             {Object.keys(gastosByCat).length === 0 ? (
-              <div className="break-empty">No hay gastos en este mes.</div>
+              <div className="break-empty">No hay gastos registrados en este mes.</div>
             ) : (
               Object.entries(gastosByCat).map(([cat, val]) => {
                 const pct = Math.max(4, Math.round((val / maxGastoCat) * 100));
@@ -368,11 +368,11 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({
         {/* Ingresos breakdown */}
         <div className="card">
           <span className="eyebrow" style={{ marginBottom: '10px' }}>
-            Ingresos del mes
+            Fuentes de Ingreso del Mes
           </span>
           <div id="breakIngresos">
             {Object.keys(ingresosByCat).length === 0 ? (
-              <div className="break-empty">No hay ingresos en este mes.</div>
+              <div className="break-empty">No hay ingresos registrados en este mes.</div>
             ) : (
               Object.entries(ingresosByCat).map(([cat, val]) => {
                 const pct = Math.max(4, Math.round((val / maxIngresoCat) * 100));
@@ -396,20 +396,20 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({
       {/* Tabla mes a mes */}
       <div className="card" style={{ marginBottom: '14px' }}>
         <span className="eyebrow" style={{ marginBottom: '10px' }}>
-          Flujo mes a mes ({selYear})
+          Flujo de Caja Mes a Mes ({selYear})
         </span>
         <div className="fin-table-wrap">
           <table className="fin-table" id="finTable">
             <thead>
               <tr>
                 <th>Mes</th>
-                <th>Facturado DJ</th>
-                <th>Otros ing.</th>
-                <th>Gastos fijos</th>
-                <th>Gastos var.</th>
-                <th>Total gastos</th>
-                <th>Neto mes</th>
-                <th>Caja acum.</th>
+                <th>Paquetes TikTok</th>
+                <th>Otros Ingresos</th>
+                <th>Gastos Fijos</th>
+                <th>Gastos Var.</th>
+                <th>Total Gastos</th>
+                <th>Utilidad Mes</th>
+                <th>Caja Acum.</th>
               </tr>
             </thead>
             <tbody>
@@ -437,46 +437,46 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({
         {/* Cargar movimiento */}
         <div className="card">
           <span className="eyebrow" style={{ marginBottom: '14px' }}>
-            Cargar movimiento
+            Registrar Movimiento Financiero
           </span>
           <form id="fMov" onSubmit={handleAddMov}>
             <div className="field">
-              <label>Tipo</label>
+              <label>Tipo de Operación</label>
               <div className="seg" id="segTipo">
                 <button
                   type="button"
                   className={`seg-b ${movTipo === 'gasto' ? 'active' : ''}`}
                   onClick={() => setMovTipo('gasto')}
                 >
-                  Gasto
+                  Gasto Operativo
                 </button>
                 <button
                   type="button"
                   className={`seg-b ${movTipo === 'ingreso' ? 'active' : ''}`}
                   onClick={() => setMovTipo('ingreso')}
                 >
-                  Ingreso
+                  Ingreso Extra
                 </button>
               </div>
             </div>
 
             {movTipo === 'gasto' && (
               <div className="field" id="fieldClase">
-                <label>Clase de gasto</label>
+                <label>Clasificación del Gasto</label>
                 <div className="seg" id="segClase">
                   <button
                     type="button"
                     className={`seg-b ${movClase === 'variable' ? 'active' : ''}`}
                     onClick={() => setMovClase('variable')}
                   >
-                    Variable (equipo, nafta...)
+                    Variable (taxis, utilería, UGC, pauta)
                   </button>
                   <button
                     type="button"
                     className={`seg-b ${movClase === 'fijo' ? 'active' : ''}`}
                     onClick={() => setMovClase('fijo')}
                   >
-                    Fijo (alquiler, subs...)
+                    Fijo (CapCut, estudio, editores)
                   </button>
                 </div>
               </div>
@@ -484,7 +484,7 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({
 
             <div className="field-row">
               <div className="field">
-                <label>Monto</label>
+                <label>Monto ({currency})</label>
                 <input
                   id="mMonto"
                   type="number"
@@ -501,7 +501,7 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({
                 <input
                   id="mCat"
                   list="catsList"
-                  placeholder="Elegí o escribí..."
+                  placeholder="Selecciona o escribe..."
                   value={movCat}
                   onChange={(e) => setMovCat(e.target.value)}
                 />
@@ -527,17 +527,17 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({
             </div>
 
             <div className="field">
-              <label>Concepto (opcional)</label>
+              <label>Detalle / Proveedor (opcional)</label>
               <input
                 id="mConcepto"
-                placeholder="Ej: Pioneer DDJ-FLX4, Nafta viaje a Rosario..."
+                placeholder="Ej: DJI Mic 2, Taxi rodaje Miraflores, Suscripción Envato..."
                 value={movConcepto}
                 onChange={(e) => setMovConcepto(e.target.value)}
               />
             </div>
 
             <button className="btn block" type="submit">
-              Guardar movimiento
+              ＋ Registrar Movimiento
             </button>
           </form>
 
@@ -553,7 +553,7 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({
               id="btnSaldoIni"
               onClick={handleEditSaldoInicial}
             >
-              ⚙︎ Editar saldo inicial de caja ({money(saldoIni, currency)})
+              ⚙︎ Saldo inicial de caja de la agencia ({money(saldoIni, currency)})
             </button>
           </div>
         </div>
@@ -567,7 +567,7 @@ export const FinanzasTab: React.FC<FinanzasTabProps> = ({
             {movsMes.length === 0 ? (
               <div className="empty" style={{ padding: '26px 12px' }}>
                 <div className="e-emoji">📊</div>
-                <p>No hay movimientos cargados en este mes.</p>
+                <p>No hay movimientos registrados en este mes.</p>
               </div>
             ) : (
               <ul className="mov-list">

@@ -1,6 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { DJState, EstadoFecha, FechaGig } from './types';
 import { getFreshState, getSeedData, isoWeek } from './utils/crmData';
+import {
+  saveStateToFirestore,
+  loadStateFromFirestore,
+  subscribeToFirestoreState,
+} from './utils/firebaseClient';
+import { saveStateToSupabase } from './utils/supabaseClient';
+import { getCachedGoogleToken } from './utils/googleCalendar';
 import { Header } from './components/Header';
 import { NavTabs, TabId } from './components/NavTabs';
 import { PanelTab } from './components/PanelTab';
@@ -17,7 +24,7 @@ import { ModalAsistente } from './components/ModalAsistente';
 import { ModalAjustes } from './components/ModalAjustes';
 import { Toast } from './components/Toast';
 
-const STORAGE_KEY = 'djcrm_v4_el_coyote_show';
+const STORAGE_KEY = 'ivacreativa_tiktok_crm_v1';
 
 export function App() {
   const [state, setState] = useState<DJState>(() => {
@@ -25,7 +32,6 @@ export function App() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Ensure week reset if week changed
         const currentWeek = isoWeek(new Date());
         if (parsed.contenido && parsed.contenido.semana !== currentWeek) {
           parsed.contenido = { semana: currentWeek, hechos: 0 };
@@ -35,12 +41,13 @@ export function App() {
     } catch (e) {
       console.error('Error loading CRM state from localStorage', e);
     }
+    // Clean initial state for real agency data
     return getFreshState({
-      nombre: 'EL COYOTE SHOW',
-      handle: '@elcoyoteshow',
+      nombre: 'IVA CREATIVA',
+      handle: '@ivacreativa.pe',
       moneda: 'S/',
-      metaContenido: 4,
-      metaFechas: 6
+      metaContenido: 12,
+      metaFechas: 6,
     });
   });
 
@@ -60,6 +67,30 @@ export function App() {
   const [prefilledPagoFechaId, setPrefilledPagoFechaId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  const isFirstRender = useRef(true);
+
+  // Initial cloud fetch from Firebase Firestore on startup
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        const cloudResult = await loadStateFromFirestore();
+        if (isMounted && cloudResult.success && cloudResult.state) {
+          setState((prev) => {
+            // If local state is newer or identical, keep it, otherwise sync from cloud
+            return cloudResult.state!;
+          });
+        }
+      } catch (err) {
+        console.warn('Initial Firebase fetch notice:', err);
+      }
+    })();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   // Save to localStorage whenever state changes
   useEffect(() => {
     try {
@@ -69,14 +100,44 @@ export function App() {
     }
   }, [state]);
 
+  // Debounced auto-save to Firebase Cloud Firestore
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        await saveStateToFirestore(state);
+      } catch (err) {
+        console.warn('Firebase Cloud auto-save notice:', err);
+      }
+
+      // Also auto-save to Supabase if configured
+      const hasSupabase =
+        Boolean(state.cloudSync?.supabaseUrl && state.cloudSync?.supabaseAnonKey) ||
+        Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY);
+      if (hasSupabase && state.cloudSync?.autoSync !== false) {
+        try {
+          await saveStateToSupabase(state);
+        } catch (err) {
+          console.warn('Supabase auto-save notice:', err);
+        }
+      }
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [state]);
+
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
     setTimeout(() => {
       setToastMessage((prev) => (prev === msg ? null : prev));
-    }, 2400);
+    }, 2600);
   }, []);
 
-  // Handlers for Dates
+  // Handlers for Dates / Shoots
   const handleOpenNuevaFecha = (datePrefill?: string) => {
     setSelectedFechaId(null);
     setPrefillFechaDate(datePrefill);
@@ -121,12 +182,21 @@ export function App() {
     return new Date(r.cuando) <= now;
   }).length;
 
+  const isSupabaseConfigured =
+    Boolean(state.cloudSync?.supabaseUrl && state.cloudSync?.supabaseAnonKey) ||
+    Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY);
+
+  const isGcalConnected = Boolean(getCachedGoogleToken());
+
   return (
     <div className="wrap">
-      {/* Header */}
+      {/* Header with IVA CREATIVA Red & Black logo, cloud status and action controls */}
       <Header
-        djName={state.perfil.nombre || 'EL COYOTE SHOW'}
-        brandLine="EL COYOTE SHOW · CRM"
+        djName={state.perfil.nombre || 'IVA CREATIVA'}
+        brandLine="IVA CREATIVA · TIKTOK AGENCY CRM"
+        isFirebaseActive={true}
+        isSupabaseConfigured={isSupabaseConfigured}
+        isGcalConnected={isGcalConnected}
         onOpenAjustes={() => setModalAjustesOpen(true)}
         onOpenAsistente={() => setModalAsistenteOpen(true)}
         onOpenNuevaFecha={() => handleOpenNuevaFecha()}
@@ -169,6 +239,8 @@ export function App() {
                 handleOpenNuevaFecha(prefillDate);
               }
             }}
+            onUpdateState={setState}
+            onShowToast={showToast}
           />
         )}
 
@@ -210,10 +282,10 @@ export function App() {
       <button
         className="fab"
         id="fabNueva"
-        title="Nueva fecha"
+        title="Agendar nuevo rodaje / cliente"
         onClick={() => handleOpenNuevaFecha()}
       >
-        ⚡ <span>+ Fecha rápida</span>
+        🎬 <span>+ Nuevo Rodaje</span>
       </button>
 
       {/* Modals */}

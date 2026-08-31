@@ -27,18 +27,37 @@ async function startServer() {
       const apiKey = process.env.GEMINI_API_KEY;
 
       if (!apiKey) {
-        // Return a smart simulated or helper response if no key is supplied
+        // Return a smart fallback response if no key is supplied
         const lastMsg = messages && messages.length > 0 ? messages[messages.length - 1].content : "";
-        let fallbackReply = "¡Hola! Como tu asistente de secretaría DJ, te recomiendo confirmar las fechas pendientes con los organizadores y enviar las propuestas con el 50% de seña para asegurar la reserva.";
+        let fallbackReply = "¡Hola! Como asistente de IVA CREATIVA, te ayudo a crear guiones para TikTok, estructurar ganchos virales y redactar mensajes para cerrar paquetes de videos con negocios.";
         
-        if (lastMsg.toLowerCase().includes("redactar")) {
-          fallbackReply = "¡Hola! ¿Cómo estás? Te escribo para confirmar la fecha del evento. Avísame y te reservo la fecha con el 50% de seña. ¡Saludos!";
-        } else if (lastMsg.toLowerCase().includes("seguimiento") || lastMsg.toLowerCase().includes("quién sigo")) {
-          fallbackReply = "Revisá tus consultas abiertas: hacé un follow-up hoy a los organizadores que consultaron presupuesto en los últimos 3 días para cerrar antes del fin de semana.";
-        } else if (lastMsg.toLowerCase().includes("semana") || lastMsg.toLowerCase().includes("organizá")) {
-          fallbackReply = "Plan para esta semana:\n1. Confirmar sonido y traslados de tus fechas del fin de semana.\n2. Mandar propuestas a consultas pendientes.\n3. Grabar y publicar 2 reels con momentos de tu último show.";
-        } else if (lastMsg.toLowerCase().includes("contenido")) {
-          fallbackReply = "5 ideas de contenido para esta semana:\n1. Reel: 'Transición que nunca falla en el club'.\n2. Historia: Encuesta de géneros para tu próximo set.\n3. Reel: 'POV: Cuando el público explota a las 3 AM'.\n4. Carrusel: '3 tracks que no pueden faltar en mi set'.\n5. Video corto preparando el set en Rekordbox.";
+        if (lastMsg.toLowerCase().includes("guion") || lastMsg.toLowerCase().includes("hook") || lastMsg.toLowerCase().includes("restaurante")) {
+          fallbackReply = `🎬 Guion Viral para Restaurante (TikTok 30s):
+- **Hook (0-3s)**: "¿El secreto para que este corte de carne se deshaga en tu boca? Mira esto..." (Toma primer plano del cuchillo cortando carne humeante con sonido crujiente).
+- **Cuerpo (3-20s)**: "En [Nombre del Local] marinamos cada pieza 24 horas a fuego lento con leña de algarrobo. Si eres amante de la buena carne, este es tu nuevo punto en Lima."
+- **CTA (20-30s)**: "Muestra este video al llegar y recibe una copa de cortesía. ¡Etiqueta a tu amigo parrillero en comentarios!"`;
+        } else if (lastMsg.toLowerCase().includes("propuesta") || lastMsg.toLowerCase().includes("pack") || lastMsg.toLowerCase().includes("presupuesto")) {
+          fallbackReply = `💬 Mensaje comercial para WhatsApp:
+"¡Hola [Nombre]! Te saluda el equipo de IVA CREATIVA 🎬.
+
+Vimos el potencial de su negocio en redes y armamos una propuesta para posicionarlos con videos virales en TikTok y Reels:
+
+📦 Pack Crecimiento TikTok:
+• 12 Videos en formato vertical (Guion + Rodaje profesional + Edición con retención).
+• 1 Jornada de grabación en tu local (equipo de cámaras, luces y microfonía).
+• Entrega de contenido listo para publicar semanalmente.
+• Inversión: S/ 2,400 (50% adelanto al agendar rodaje / 50% al entregar).
+
+¿Te gustaría que agendemos la sesión de rodaje para esta semana? ¡Quedamos atentos!"`;
+        } else if (lastMsg.toLowerCase().includes("seguimiento") || lastMsg.toLowerCase().includes("cierres")) {
+          fallbackReply = "🎯 Seguimiento de ventas para hoy:\n1. Escribe a los negocios con cotizaciones enviadas hace más de 48h para resolver dudas de guiones.\n2. Coordina fechas de rodaje con clientes que ya abonaron su adelanto del 50%.\n3. Envía recordatorio de pago a los paquetes con saldo pendiente de entrega.";
+        } else if (lastMsg.toLowerCase().includes("formatos") || lastMsg.toLowerCase().includes("ideas")) {
+          fallbackReply = `💡 5 Formatos de Video Virales para Negocios en TikTok:
+1. **POV Experiencia Real**: "POV: Vienes a almorzar a las 2pm y te atienden como rey".
+2. **Derribando Mitos**: "3 cosas que tu dentista/médico/marca nunca te dijo sobre...".
+3. **El Detrás de Escenas**: "Cómo preparamos 100 pedidos en 2 horas sin morir en el intento".
+4. **Transformación Antes / Después**: Resultado visual impactante con audio en tendencia.
+5. **Entrevista / Reacción con Clientes**: "¿Cuánto calificarías este plato del 1 al 10?"`;
         }
 
         return res.json({ text: fallbackReply });
@@ -46,12 +65,11 @@ async function startServer() {
 
       const ai = new GoogleGenAI({ apiKey });
 
-      // Convert messages to Gemini format or structured prompt
       const conversationHistory = (messages || [])
-        .map((m: { role: string; content: string }) => `${m.role === "user" ? "DJ" : "Secretaría"}: ${m.content}`)
+        .map((m: { role: string; content: string }) => `${m.role === "user" ? "Agencia" : "Director IA"}: ${m.content}`)
         .join("\n\n");
 
-      const prompt = `${system || ""}\n\nHistorial de la conversación:\n${conversationHistory}\n\nSecretaría:`;
+      const prompt = `${system || ""}\n\nHistorial de la conversación:\n${conversationHistory}\n\nDirector IA:`;
 
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
@@ -70,7 +88,7 @@ async function startServer() {
     }
   });
 
-  // AI Parse endpoint for turning text/chat into structured date
+  // AI Parse endpoint for turning text/chat into structured shoot/client
   app.post("/api/ai/parse", async (req, res) => {
     try {
       const { text, currentYear } = req.body;
@@ -78,33 +96,33 @@ async function startServer() {
       const apiKey = process.env.GEMINI_API_KEY;
 
       if (!apiKey) {
-        // Fallback basic heuristic parser
+        // Fallback basic heuristic parser for TikTok agency
         const now = new Date();
-        const dateStr = new Date(now.setDate(now.getDate() + 7)).toISOString().slice(0, 10);
+        const dateStr = new Date(now.setDate(now.getDate() + 5)).toISOString().slice(0, 10);
         return res.json({
-          lugar: text.slice(0, 40) || "Evento privado",
+          lugar: text.slice(0, 40) || "Cliente / Negocio",
           fecha: dateStr,
-          horario: "00:00 a 04:00",
+          horario: "10:00 a 14:00",
           contacto: "Cliente WhatsApp",
-          ticket: 150000,
-          notas: text.slice(0, 100)
+          ticket: 2400,
+          notas: text.slice(0, 120)
         });
       }
 
       const ai = new GoogleGenAI({ apiKey });
 
-      const prompt = `Extraé de este mensaje los datos de una posible fecha de DJ. Respondé ÚNICAMENTE un JSON válido (sin formato markdown \`\`\`json ni texto adicional).
+      const prompt = `Extrae de este mensaje de WhatsApp los datos de un cliente o rodaje para una agencia de videos de TikTok. Responde ÚNICAMENTE un JSON válido (sin formato markdown ni texto adicional).
 Claves exactas:
-- lugar (string: nombre del lugar, club, boliche o tipo de evento)
+- lugar (string: nombre del negocio, cliente, restaurante, marca o locación)
 - fecha (string formato YYYY-MM-DD o "")
-- horario (string, ej: "01:00 a 05:00" o "")
-- contacto (string con nombre y/o teléfono o usuario)
-- ticket (número entero en pesos, 0 si no hay o no se menciona)
-- notas (string con requerimientos de sonido, música o detalles importantes)
+- horario (string con horario de rodaje, ej: "10:00 a 14:00" o "")
+- contacto (string con nombre, WhatsApp o cargo del contacto)
+- ticket (número entero con la tarifa o presupuesto en Soles S/, 0 si no se menciona)
+- notas (string con requerimientos de grabación, paquete de videos solicitado o detalles clave)
 
-Año actual de referencia: ${year}. Interpretá fechas relativas hacia el futuro próximo.
-Expresiones como "150 lucas", "150k", "150 mil" equivalen a 150000.
-Si falta un dato, poné "" o 0.
+Año actual de referencia: ${year}.
+Expresiones como "2400 soles", "2.4k", "2400" equivalen a 2400.
+Si falta un dato, coloca "" o 0.
 
 Mensaje del cliente:
 "${text}"`;
@@ -145,7 +163,7 @@ Mensaje del cliente:
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`CRM DJ server running on port ${PORT}`);
+    console.log(`IVA CREATIVA CRM server running on port ${PORT}`);
   });
 }
 

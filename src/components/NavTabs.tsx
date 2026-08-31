@@ -10,13 +10,13 @@ interface NavTabsProps {
 
 const TABS: { id: TabId; label: string }[] = [
   { id: 'panel', label: 'Panel' },
-  { id: 'fechas', label: 'Fechas' },
+  { id: 'fechas', label: 'Rodajes & Clientes' },
   { id: 'calendario', label: 'Calendario' },
   { id: 'stats', label: 'Estadísticas' },
   { id: 'objetivos', label: 'Objetivos' },
-  { id: 'pagos', label: 'Pagos' },
+  { id: 'pagos', label: 'Pagos & Cobros' },
   { id: 'finanzas', label: 'Finanzas' },
-  { id: 'notas', label: 'Notas' },
+  { id: 'notas', label: 'Guiones & Notas' },
 ];
 
 export const NavTabs: React.FC<NavTabsProps> = ({
@@ -25,7 +25,7 @@ export const NavTabs: React.FC<NavTabsProps> = ({
   pendingRemindersCount,
 }) => {
   return (
-    <nav className="nav" id="nav">
+    <nav className="nav mb-6" id="nav">
       {TABS.map((tab) => (
         <button
           key={tab.id}
